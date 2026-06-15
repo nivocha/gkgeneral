@@ -52,7 +52,7 @@ export const CallbackPayloadSchema = z.object({
   card_masked: z.string().optional(),
   payment_id: z.string().optional(),
   gateway_status: z.string().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 export type CallbackPayload = z.infer<typeof CallbackPayloadSchema>

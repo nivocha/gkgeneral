@@ -16,7 +16,7 @@ export async function proxy(request: NextRequest) {
   // Rate limiting — Better Auth handles auth rate limiting natively (10/min)
   const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown"
   if (pathname.startsWith("/search") || pathname.startsWith("/api/search")) {
-    if (!checkRateLimit(`search:${ip}`, "search")) {
+    if (!checkRateLimit(`search:${ip}`, 10).allowed) {
       return new NextResponse("Too many requests", { status: 429 })
     }
   }

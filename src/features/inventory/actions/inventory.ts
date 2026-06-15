@@ -327,8 +327,8 @@ export async function getInventoryMovements(params?: z.infer<typeof GetMovements
   }
   if (validated.fromDate || validated.toDate) {
     where.createdAt = {}
-    if (validated.fromDate) (where.createdAt as never).gte = new Date(validated.fromDate)
-    if (validated.toDate) (where.createdAt as never).lte = new Date(validated.toDate)
+    if (validated.fromDate) (where.createdAt as Record<string, unknown>).gte = new Date(validated.fromDate)
+    if (validated.toDate) (where.createdAt as Record<string, unknown>).lte = new Date(validated.toDate)
   }
 
   const orderBy: Record<string, string> = {}
