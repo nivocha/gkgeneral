@@ -2,7 +2,7 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
+  serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg", "@better-auth/kysely-adapter"],
   images: {
     remotePatterns: [
       {
