@@ -4,7 +4,7 @@ import { ArrowRight, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getPublicBrands } from "@/features/brands/actions/get-brands"
 
-export const revalidate = 120
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Brands | GK General Supply",

@@ -15,7 +15,7 @@ import { BrandShowcase } from "@/components/brand-showcase"
 import { TestimonialSection } from "@/components/testimonial-section"
 import { StatisticsSection } from "@/components/statistics-section"
 
-export const revalidate = 120
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: siteConfig.name,

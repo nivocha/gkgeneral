@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button-variants"
 import { getPublicBrandBySlug } from "@/features/brands/actions/get-brands"
 import { ProductCard } from "@/features/products/components/product-card"
 
-export const revalidate = 120
+export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ slug: string }> }
 

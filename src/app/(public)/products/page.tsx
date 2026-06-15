@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Browse our complete catalog of industrial equipment, generators, solar products, pumps, tools, and machinery.",
 }
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export default function ProductsPage() {
   return <ProductsPageContent />

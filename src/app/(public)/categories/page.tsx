@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "Browse our full range of product categories including generators, solar products, pumps, electrical equipment, tools, and industrial solutions.",
 }
 
-export const revalidate = 120
+export const dynamic = "force-dynamic"
 
 export default async function CategoriesPage() {
   const categories = await prisma.category.findMany({
