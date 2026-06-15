@@ -8,7 +8,7 @@ RUN npm install
 
 FROM base AS builder
 COPY package*.json ./
-RUN npm install
+RUN npm install && rm -rf node_modules/better-auth/node_modules/kysely
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npx prisma generate
