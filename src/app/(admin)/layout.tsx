@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3,
   Settings, FileText, Warehouse, MapPin, CreditCard,
-  Shield, Activity, Bell, ChevronLeft, Menu,
+  Shield, Activity, Bell, ChevronLeft, Menu, Link2,
   LogOut, User, ChartPie, Layout, Tag, Mail, UserPlus, Store
 } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -25,6 +25,7 @@ const sidebarLinks = [
   { href: "/admin/dashboard/quotes", label: "Quotes", icon: FileText },
   { href: "/admin/dashboard/customers", label: "Customers", icon: Users },
   { href: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/dashboard/payment-links", label: "Payment Links", icon: Link2 },
   { href: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/admin/dashboard/users", label: "Users", icon: Shield },
   { href: "/admin/dashboard/roles", label: "Roles", icon: Activity },
