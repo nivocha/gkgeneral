@@ -1,29 +1,13 @@
-version: "3.8"
 services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
     build: .
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      DATABASE_URL: ${DATABASE_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${APP_URL}
-      NEXT_PUBLIC_APP_URL: ${APP_URL}
+      BETTER_AUTH_URL: https://gkgenerals.com
+      NEXT_PUBLIC_APP_URL: https://gkgenerals.com
       NEXT_PUBLIC_APP_NAME: ${APP_NAME}
       NEXT_PUBLIC_APP_DESCRIPTION: ${APP_DESCRIPTION}
       FORCE_HTTPS: "false"
@@ -34,10 +18,4 @@ services:
       EVMAK_API_KEY: ${EVMAK_API_KEY}
       EVMAK_API_URL: ${EVMAK_API_URL}
       EVMAK_WEBHOOK_SECRET: ${EVMAK_WEBHOOK_SECRET}
-    depends_on:
-      postgres:
-        condition: service_healthy
     restart: unless-stopped
-
-volumes:
-  postgres_data:
