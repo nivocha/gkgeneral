@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { formatPrice, formatDateTime, formatDate } from "@/lib/utils"
 import { ChevronLeft } from "lucide-react"
+import { PaymentLinkGenerator } from "@/features/payments/components/payment-link-generator"
 
 export const dynamic = "force-dynamic"
 
@@ -111,6 +112,8 @@ export default async function AdminOrderDetailPage({ params }: Props) {
               </div>
             </CardContent>
           </Card>
+
+          <PaymentLinkGenerator orderId={order.id} />
 
           {order.payment && (
             <Card>

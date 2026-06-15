@@ -371,6 +371,7 @@ model Order {
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
   payment       Payment?
+  paymentLinks  PaymentLink[]
 }
 
 model OrderItem {
@@ -397,6 +398,31 @@ model OrderStatusHistory {
   createdAt DateTime    @default(now())
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+enum PaymentLinkStatus {
+  Active
+  Paid
+  Expired
+}
+
+model PaymentLink {
+  id              String            @id @default(cuid())
+  token           String            @unique
+  orderId         String
+  status          PaymentLinkStatus @default(Active)
+  customerName    String?
+  customerPhone   String?
+  customerEmail   String?
+  customerAddress Json?
+  expiresAt       DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([status])
 }
 
 model Payment {

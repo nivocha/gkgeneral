@@ -119,6 +119,11 @@ export type OrderItem = $Result.DefaultSelection<Prisma.$OrderItemPayload>
  */
 export type OrderStatusHistory = $Result.DefaultSelection<Prisma.$OrderStatusHistoryPayload>
 /**
+ * Model PaymentLink
+ * 
+ */
+export type PaymentLink = $Result.DefaultSelection<Prisma.$PaymentLinkPayload>
+/**
  * Model Payment
  * 
  */
@@ -292,6 +297,15 @@ export const InventoryMovementType: {
 
 export type InventoryMovementType = (typeof InventoryMovementType)[keyof typeof InventoryMovementType]
 
+
+export const PaymentLinkStatus: {
+  Active: 'Active',
+  Paid: 'Paid',
+  Expired: 'Expired'
+};
+
+export type PaymentLinkStatus = (typeof PaymentLinkStatus)[keyof typeof PaymentLinkStatus]
+
 }
 
 export type ProductStatus = $Enums.ProductStatus
@@ -317,6 +331,10 @@ export const DownloadType: typeof $Enums.DownloadType
 export type InventoryMovementType = $Enums.InventoryMovementType
 
 export const InventoryMovementType: typeof $Enums.InventoryMovementType
+
+export type PaymentLinkStatus = $Enums.PaymentLinkStatus
+
+export const PaymentLinkStatus: typeof $Enums.PaymentLinkStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -648,6 +666,16 @@ export class PrismaClient<
     * ```
     */
   get orderStatusHistory(): Prisma.OrderStatusHistoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.paymentLink`: Exposes CRUD operations for the **PaymentLink** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PaymentLinks
+    * const paymentLinks = await prisma.paymentLink.findMany()
+    * ```
+    */
+  get paymentLink(): Prisma.PaymentLinkDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.payment`: Exposes CRUD operations for the **Payment** model.
@@ -1303,6 +1331,7 @@ export namespace Prisma {
     Order: 'Order',
     OrderItem: 'OrderItem',
     OrderStatusHistory: 'OrderStatusHistory',
+    PaymentLink: 'PaymentLink',
     Payment: 'Payment',
     PaymentTransaction: 'PaymentTransaction',
     Quote: 'Quote',
@@ -1338,7 +1367,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "brand" | "role" | "permission" | "rolePermission" | "userRole" | "category" | "product" | "productStatusHistory" | "productVariant" | "productImage" | "productSpecification" | "productDownload" | "cart" | "cartItem" | "order" | "orderItem" | "orderStatusHistory" | "payment" | "paymentTransaction" | "quote" | "quoteItem" | "address" | "review" | "wishlist" | "notification" | "auditLog" | "warehouse" | "inventory" | "inventoryMovement" | "heroBanner" | "promotionBanner" | "testimonial" | "siteStatistic" | "cmsPage" | "subscriber" | "contactSubmission" | "recentlyViewed"
+      modelProps: "user" | "session" | "account" | "verification" | "brand" | "role" | "permission" | "rolePermission" | "userRole" | "category" | "product" | "productStatusHistory" | "productVariant" | "productImage" | "productSpecification" | "productDownload" | "cart" | "cartItem" | "order" | "orderItem" | "orderStatusHistory" | "paymentLink" | "payment" | "paymentTransaction" | "quote" | "quoteItem" | "address" | "review" | "wishlist" | "notification" | "auditLog" | "warehouse" | "inventory" | "inventoryMovement" | "heroBanner" | "promotionBanner" | "testimonial" | "siteStatistic" | "cmsPage" | "subscriber" | "contactSubmission" | "recentlyViewed"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2893,6 +2922,80 @@ export namespace Prisma {
           count: {
             args: Prisma.OrderStatusHistoryCountArgs<ExtArgs>
             result: $Utils.Optional<OrderStatusHistoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      PaymentLink: {
+        payload: Prisma.$PaymentLinkPayload<ExtArgs>
+        fields: Prisma.PaymentLinkFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PaymentLinkFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PaymentLinkFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>
+          }
+          findFirst: {
+            args: Prisma.PaymentLinkFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PaymentLinkFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>
+          }
+          findMany: {
+            args: Prisma.PaymentLinkFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>[]
+          }
+          create: {
+            args: Prisma.PaymentLinkCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>
+          }
+          createMany: {
+            args: Prisma.PaymentLinkCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PaymentLinkCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>[]
+          }
+          delete: {
+            args: Prisma.PaymentLinkDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>
+          }
+          update: {
+            args: Prisma.PaymentLinkUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>
+          }
+          deleteMany: {
+            args: Prisma.PaymentLinkDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PaymentLinkUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PaymentLinkUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>[]
+          }
+          upsert: {
+            args: Prisma.PaymentLinkUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentLinkPayload>
+          }
+          aggregate: {
+            args: Prisma.PaymentLinkAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePaymentLink>
+          }
+          groupBy: {
+            args: Prisma.PaymentLinkGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PaymentLinkGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PaymentLinkCountArgs<ExtArgs>
+            result: $Utils.Optional<PaymentLinkCountAggregateOutputType> | number
           }
         }
       }
@@ -4505,6 +4608,7 @@ export namespace Prisma {
     order?: OrderOmit
     orderItem?: OrderItemOmit
     orderStatusHistory?: OrderStatusHistoryOmit
+    paymentLink?: PaymentLinkOmit
     payment?: PaymentOmit
     paymentTransaction?: PaymentTransactionOmit
     quote?: QuoteOmit
@@ -5040,11 +5144,13 @@ export namespace Prisma {
   export type OrderCountOutputType = {
     items: number
     statusHistory: number
+    paymentLinks: number
   }
 
   export type OrderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | OrderCountOutputTypeCountItemsArgs
     statusHistory?: boolean | OrderCountOutputTypeCountStatusHistoryArgs
+    paymentLinks?: boolean | OrderCountOutputTypeCountPaymentLinksArgs
   }
 
   // Custom InputTypes
@@ -5070,6 +5176,13 @@ export namespace Prisma {
    */
   export type OrderCountOutputTypeCountStatusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderStatusHistoryWhereInput
+  }
+
+  /**
+   * OrderCountOutputType without action
+   */
+  export type OrderCountOutputTypeCountPaymentLinksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentLinkWhereInput
   }
 
 
@@ -26571,6 +26684,7 @@ export namespace Prisma {
     items?: boolean | Order$itemsArgs<ExtArgs>
     statusHistory?: boolean | Order$statusHistoryArgs<ExtArgs>
     payment?: boolean | Order$paymentArgs<ExtArgs>
+    paymentLinks?: boolean | Order$paymentLinksArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -26627,6 +26741,7 @@ export namespace Prisma {
     items?: boolean | Order$itemsArgs<ExtArgs>
     statusHistory?: boolean | Order$statusHistoryArgs<ExtArgs>
     payment?: boolean | Order$paymentArgs<ExtArgs>
+    paymentLinks?: boolean | Order$paymentLinksArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -26643,6 +26758,7 @@ export namespace Prisma {
       items: Prisma.$OrderItemPayload<ExtArgs>[]
       statusHistory: Prisma.$OrderStatusHistoryPayload<ExtArgs>[]
       payment: Prisma.$PaymentPayload<ExtArgs> | null
+      paymentLinks: Prisma.$PaymentLinkPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -27055,6 +27171,7 @@ export namespace Prisma {
     items<T extends Order$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     statusHistory<T extends Order$statusHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Order$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payment<T extends Order$paymentArgs<ExtArgs> = {}>(args?: Subset<T, Order$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    paymentLinks<T extends Order$paymentLinksArgs<ExtArgs> = {}>(args?: Subset<T, Order$paymentLinksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -27561,6 +27678,30 @@ export namespace Prisma {
      */
     include?: PaymentInclude<ExtArgs> | null
     where?: PaymentWhereInput
+  }
+
+  /**
+   * Order.paymentLinks
+   */
+  export type Order$paymentLinksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    where?: PaymentLinkWhereInput
+    orderBy?: PaymentLinkOrderByWithRelationInput | PaymentLinkOrderByWithRelationInput[]
+    cursor?: PaymentLinkWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentLinkScalarFieldEnum | PaymentLinkScalarFieldEnum[]
   }
 
   /**
@@ -29820,6 +29961,1143 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrderStatusHistoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PaymentLink
+   */
+
+  export type AggregatePaymentLink = {
+    _count: PaymentLinkCountAggregateOutputType | null
+    _min: PaymentLinkMinAggregateOutputType | null
+    _max: PaymentLinkMaxAggregateOutputType | null
+  }
+
+  export type PaymentLinkMinAggregateOutputType = {
+    id: string | null
+    token: string | null
+    orderId: string | null
+    status: $Enums.PaymentLinkStatus | null
+    customerName: string | null
+    customerPhone: string | null
+    customerEmail: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PaymentLinkMaxAggregateOutputType = {
+    id: string | null
+    token: string | null
+    orderId: string | null
+    status: $Enums.PaymentLinkStatus | null
+    customerName: string | null
+    customerPhone: string | null
+    customerEmail: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PaymentLinkCountAggregateOutputType = {
+    id: number
+    token: number
+    orderId: number
+    status: number
+    customerName: number
+    customerPhone: number
+    customerEmail: number
+    customerAddress: number
+    expiresAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PaymentLinkMinAggregateInputType = {
+    id?: true
+    token?: true
+    orderId?: true
+    status?: true
+    customerName?: true
+    customerPhone?: true
+    customerEmail?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PaymentLinkMaxAggregateInputType = {
+    id?: true
+    token?: true
+    orderId?: true
+    status?: true
+    customerName?: true
+    customerPhone?: true
+    customerEmail?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PaymentLinkCountAggregateInputType = {
+    id?: true
+    token?: true
+    orderId?: true
+    status?: true
+    customerName?: true
+    customerPhone?: true
+    customerEmail?: true
+    customerAddress?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PaymentLinkAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PaymentLink to aggregate.
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentLinks to fetch.
+     */
+    orderBy?: PaymentLinkOrderByWithRelationInput | PaymentLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PaymentLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PaymentLinks
+    **/
+    _count?: true | PaymentLinkCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PaymentLinkMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PaymentLinkMaxAggregateInputType
+  }
+
+  export type GetPaymentLinkAggregateType<T extends PaymentLinkAggregateArgs> = {
+        [P in keyof T & keyof AggregatePaymentLink]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePaymentLink[P]>
+      : GetScalarType<T[P], AggregatePaymentLink[P]>
+  }
+
+
+
+
+  export type PaymentLinkGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentLinkWhereInput
+    orderBy?: PaymentLinkOrderByWithAggregationInput | PaymentLinkOrderByWithAggregationInput[]
+    by: PaymentLinkScalarFieldEnum[] | PaymentLinkScalarFieldEnum
+    having?: PaymentLinkScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PaymentLinkCountAggregateInputType | true
+    _min?: PaymentLinkMinAggregateInputType
+    _max?: PaymentLinkMaxAggregateInputType
+  }
+
+  export type PaymentLinkGroupByOutputType = {
+    id: string
+    token: string
+    orderId: string
+    status: $Enums.PaymentLinkStatus
+    customerName: string | null
+    customerPhone: string | null
+    customerEmail: string | null
+    customerAddress: JsonValue | null
+    expiresAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: PaymentLinkCountAggregateOutputType | null
+    _min: PaymentLinkMinAggregateOutputType | null
+    _max: PaymentLinkMaxAggregateOutputType | null
+  }
+
+  type GetPaymentLinkGroupByPayload<T extends PaymentLinkGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PaymentLinkGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PaymentLinkGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PaymentLinkGroupByOutputType[P]>
+            : GetScalarType<T[P], PaymentLinkGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PaymentLinkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    orderId?: boolean
+    status?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerEmail?: boolean
+    customerAddress?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["paymentLink"]>
+
+  export type PaymentLinkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    orderId?: boolean
+    status?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerEmail?: boolean
+    customerAddress?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["paymentLink"]>
+
+  export type PaymentLinkSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    orderId?: boolean
+    status?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerEmail?: boolean
+    customerAddress?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["paymentLink"]>
+
+  export type PaymentLinkSelectScalar = {
+    id?: boolean
+    token?: boolean
+    orderId?: boolean
+    status?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerEmail?: boolean
+    customerAddress?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PaymentLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "orderId" | "status" | "customerName" | "customerPhone" | "customerEmail" | "customerAddress" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentLink"]>
+  export type PaymentLinkInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }
+  export type PaymentLinkIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }
+  export type PaymentLinkIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }
+
+  export type $PaymentLinkPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PaymentLink"
+    objects: {
+      order: Prisma.$OrderPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      token: string
+      orderId: string
+      status: $Enums.PaymentLinkStatus
+      customerName: string | null
+      customerPhone: string | null
+      customerEmail: string | null
+      customerAddress: Prisma.JsonValue | null
+      expiresAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["paymentLink"]>
+    composites: {}
+  }
+
+  type PaymentLinkGetPayload<S extends boolean | null | undefined | PaymentLinkDefaultArgs> = $Result.GetResult<Prisma.$PaymentLinkPayload, S>
+
+  type PaymentLinkCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PaymentLinkFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PaymentLinkCountAggregateInputType | true
+    }
+
+  export interface PaymentLinkDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PaymentLink'], meta: { name: 'PaymentLink' } }
+    /**
+     * Find zero or one PaymentLink that matches the filter.
+     * @param {PaymentLinkFindUniqueArgs} args - Arguments to find a PaymentLink
+     * @example
+     * // Get one PaymentLink
+     * const paymentLink = await prisma.paymentLink.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PaymentLinkFindUniqueArgs>(args: SelectSubset<T, PaymentLinkFindUniqueArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PaymentLink that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PaymentLinkFindUniqueOrThrowArgs} args - Arguments to find a PaymentLink
+     * @example
+     * // Get one PaymentLink
+     * const paymentLink = await prisma.paymentLink.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PaymentLinkFindUniqueOrThrowArgs>(args: SelectSubset<T, PaymentLinkFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PaymentLink that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkFindFirstArgs} args - Arguments to find a PaymentLink
+     * @example
+     * // Get one PaymentLink
+     * const paymentLink = await prisma.paymentLink.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PaymentLinkFindFirstArgs>(args?: SelectSubset<T, PaymentLinkFindFirstArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PaymentLink that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkFindFirstOrThrowArgs} args - Arguments to find a PaymentLink
+     * @example
+     * // Get one PaymentLink
+     * const paymentLink = await prisma.paymentLink.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PaymentLinkFindFirstOrThrowArgs>(args?: SelectSubset<T, PaymentLinkFindFirstOrThrowArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PaymentLinks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PaymentLinks
+     * const paymentLinks = await prisma.paymentLink.findMany()
+     * 
+     * // Get first 10 PaymentLinks
+     * const paymentLinks = await prisma.paymentLink.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const paymentLinkWithIdOnly = await prisma.paymentLink.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PaymentLinkFindManyArgs>(args?: SelectSubset<T, PaymentLinkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PaymentLink.
+     * @param {PaymentLinkCreateArgs} args - Arguments to create a PaymentLink.
+     * @example
+     * // Create one PaymentLink
+     * const PaymentLink = await prisma.paymentLink.create({
+     *   data: {
+     *     // ... data to create a PaymentLink
+     *   }
+     * })
+     * 
+     */
+    create<T extends PaymentLinkCreateArgs>(args: SelectSubset<T, PaymentLinkCreateArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PaymentLinks.
+     * @param {PaymentLinkCreateManyArgs} args - Arguments to create many PaymentLinks.
+     * @example
+     * // Create many PaymentLinks
+     * const paymentLink = await prisma.paymentLink.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PaymentLinkCreateManyArgs>(args?: SelectSubset<T, PaymentLinkCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PaymentLinks and returns the data saved in the database.
+     * @param {PaymentLinkCreateManyAndReturnArgs} args - Arguments to create many PaymentLinks.
+     * @example
+     * // Create many PaymentLinks
+     * const paymentLink = await prisma.paymentLink.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PaymentLinks and only return the `id`
+     * const paymentLinkWithIdOnly = await prisma.paymentLink.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PaymentLinkCreateManyAndReturnArgs>(args?: SelectSubset<T, PaymentLinkCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PaymentLink.
+     * @param {PaymentLinkDeleteArgs} args - Arguments to delete one PaymentLink.
+     * @example
+     * // Delete one PaymentLink
+     * const PaymentLink = await prisma.paymentLink.delete({
+     *   where: {
+     *     // ... filter to delete one PaymentLink
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PaymentLinkDeleteArgs>(args: SelectSubset<T, PaymentLinkDeleteArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PaymentLink.
+     * @param {PaymentLinkUpdateArgs} args - Arguments to update one PaymentLink.
+     * @example
+     * // Update one PaymentLink
+     * const paymentLink = await prisma.paymentLink.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PaymentLinkUpdateArgs>(args: SelectSubset<T, PaymentLinkUpdateArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PaymentLinks.
+     * @param {PaymentLinkDeleteManyArgs} args - Arguments to filter PaymentLinks to delete.
+     * @example
+     * // Delete a few PaymentLinks
+     * const { count } = await prisma.paymentLink.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PaymentLinkDeleteManyArgs>(args?: SelectSubset<T, PaymentLinkDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PaymentLinks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PaymentLinks
+     * const paymentLink = await prisma.paymentLink.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PaymentLinkUpdateManyArgs>(args: SelectSubset<T, PaymentLinkUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PaymentLinks and returns the data updated in the database.
+     * @param {PaymentLinkUpdateManyAndReturnArgs} args - Arguments to update many PaymentLinks.
+     * @example
+     * // Update many PaymentLinks
+     * const paymentLink = await prisma.paymentLink.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PaymentLinks and only return the `id`
+     * const paymentLinkWithIdOnly = await prisma.paymentLink.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PaymentLinkUpdateManyAndReturnArgs>(args: SelectSubset<T, PaymentLinkUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PaymentLink.
+     * @param {PaymentLinkUpsertArgs} args - Arguments to update or create a PaymentLink.
+     * @example
+     * // Update or create a PaymentLink
+     * const paymentLink = await prisma.paymentLink.upsert({
+     *   create: {
+     *     // ... data to create a PaymentLink
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PaymentLink we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PaymentLinkUpsertArgs>(args: SelectSubset<T, PaymentLinkUpsertArgs<ExtArgs>>): Prisma__PaymentLinkClient<$Result.GetResult<Prisma.$PaymentLinkPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PaymentLinks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkCountArgs} args - Arguments to filter PaymentLinks to count.
+     * @example
+     * // Count the number of PaymentLinks
+     * const count = await prisma.paymentLink.count({
+     *   where: {
+     *     // ... the filter for the PaymentLinks we want to count
+     *   }
+     * })
+    **/
+    count<T extends PaymentLinkCountArgs>(
+      args?: Subset<T, PaymentLinkCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PaymentLinkCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PaymentLink.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PaymentLinkAggregateArgs>(args: Subset<T, PaymentLinkAggregateArgs>): Prisma.PrismaPromise<GetPaymentLinkAggregateType<T>>
+
+    /**
+     * Group by PaymentLink.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentLinkGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PaymentLinkGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PaymentLinkGroupByArgs['orderBy'] }
+        : { orderBy?: PaymentLinkGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PaymentLinkGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPaymentLinkGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PaymentLink model
+   */
+  readonly fields: PaymentLinkFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PaymentLink.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PaymentLinkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    order<T extends OrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderDefaultArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PaymentLink model
+   */
+  interface PaymentLinkFieldRefs {
+    readonly id: FieldRef<"PaymentLink", 'String'>
+    readonly token: FieldRef<"PaymentLink", 'String'>
+    readonly orderId: FieldRef<"PaymentLink", 'String'>
+    readonly status: FieldRef<"PaymentLink", 'PaymentLinkStatus'>
+    readonly customerName: FieldRef<"PaymentLink", 'String'>
+    readonly customerPhone: FieldRef<"PaymentLink", 'String'>
+    readonly customerEmail: FieldRef<"PaymentLink", 'String'>
+    readonly customerAddress: FieldRef<"PaymentLink", 'Json'>
+    readonly expiresAt: FieldRef<"PaymentLink", 'DateTime'>
+    readonly createdAt: FieldRef<"PaymentLink", 'DateTime'>
+    readonly updatedAt: FieldRef<"PaymentLink", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PaymentLink findUnique
+   */
+  export type PaymentLinkFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentLink to fetch.
+     */
+    where: PaymentLinkWhereUniqueInput
+  }
+
+  /**
+   * PaymentLink findUniqueOrThrow
+   */
+  export type PaymentLinkFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentLink to fetch.
+     */
+    where: PaymentLinkWhereUniqueInput
+  }
+
+  /**
+   * PaymentLink findFirst
+   */
+  export type PaymentLinkFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentLink to fetch.
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentLinks to fetch.
+     */
+    orderBy?: PaymentLinkOrderByWithRelationInput | PaymentLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PaymentLinks.
+     */
+    cursor?: PaymentLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentLinks.
+     */
+    distinct?: PaymentLinkScalarFieldEnum | PaymentLinkScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentLink findFirstOrThrow
+   */
+  export type PaymentLinkFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentLink to fetch.
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentLinks to fetch.
+     */
+    orderBy?: PaymentLinkOrderByWithRelationInput | PaymentLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PaymentLinks.
+     */
+    cursor?: PaymentLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentLinks.
+     */
+    distinct?: PaymentLinkScalarFieldEnum | PaymentLinkScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentLink findMany
+   */
+  export type PaymentLinkFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which PaymentLinks to fetch.
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentLinks to fetch.
+     */
+    orderBy?: PaymentLinkOrderByWithRelationInput | PaymentLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PaymentLinks.
+     */
+    cursor?: PaymentLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentLinks.
+     */
+    distinct?: PaymentLinkScalarFieldEnum | PaymentLinkScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentLink create
+   */
+  export type PaymentLinkCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PaymentLink.
+     */
+    data: XOR<PaymentLinkCreateInput, PaymentLinkUncheckedCreateInput>
+  }
+
+  /**
+   * PaymentLink createMany
+   */
+  export type PaymentLinkCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PaymentLinks.
+     */
+    data: PaymentLinkCreateManyInput | PaymentLinkCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PaymentLink createManyAndReturn
+   */
+  export type PaymentLinkCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * The data used to create many PaymentLinks.
+     */
+    data: PaymentLinkCreateManyInput | PaymentLinkCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PaymentLink update
+   */
+  export type PaymentLinkUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PaymentLink.
+     */
+    data: XOR<PaymentLinkUpdateInput, PaymentLinkUncheckedUpdateInput>
+    /**
+     * Choose, which PaymentLink to update.
+     */
+    where: PaymentLinkWhereUniqueInput
+  }
+
+  /**
+   * PaymentLink updateMany
+   */
+  export type PaymentLinkUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PaymentLinks.
+     */
+    data: XOR<PaymentLinkUpdateManyMutationInput, PaymentLinkUncheckedUpdateManyInput>
+    /**
+     * Filter which PaymentLinks to update
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * Limit how many PaymentLinks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentLink updateManyAndReturn
+   */
+  export type PaymentLinkUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * The data used to update PaymentLinks.
+     */
+    data: XOR<PaymentLinkUpdateManyMutationInput, PaymentLinkUncheckedUpdateManyInput>
+    /**
+     * Filter which PaymentLinks to update
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * Limit how many PaymentLinks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PaymentLink upsert
+   */
+  export type PaymentLinkUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PaymentLink to update in case it exists.
+     */
+    where: PaymentLinkWhereUniqueInput
+    /**
+     * In case the PaymentLink found by the `where` argument doesn't exist, create a new PaymentLink with this data.
+     */
+    create: XOR<PaymentLinkCreateInput, PaymentLinkUncheckedCreateInput>
+    /**
+     * In case the PaymentLink was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PaymentLinkUpdateInput, PaymentLinkUncheckedUpdateInput>
+  }
+
+  /**
+   * PaymentLink delete
+   */
+  export type PaymentLinkDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
+    /**
+     * Filter which PaymentLink to delete.
+     */
+    where: PaymentLinkWhereUniqueInput
+  }
+
+  /**
+   * PaymentLink deleteMany
+   */
+  export type PaymentLinkDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PaymentLinks to delete
+     */
+    where?: PaymentLinkWhereInput
+    /**
+     * Limit how many PaymentLinks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentLink without action
+   */
+  export type PaymentLinkDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentLink
+     */
+    select?: PaymentLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentLink
+     */
+    omit?: PaymentLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentLinkInclude<ExtArgs> | null
   }
 
 
@@ -52571,6 +53849,23 @@ export namespace Prisma {
   export type OrderStatusHistoryScalarFieldEnum = (typeof OrderStatusHistoryScalarFieldEnum)[keyof typeof OrderStatusHistoryScalarFieldEnum]
 
 
+  export const PaymentLinkScalarFieldEnum: {
+    id: 'id',
+    token: 'token',
+    orderId: 'orderId',
+    status: 'status',
+    customerName: 'customerName',
+    customerPhone: 'customerPhone',
+    customerEmail: 'customerEmail',
+    customerAddress: 'customerAddress',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PaymentLinkScalarFieldEnum = (typeof PaymentLinkScalarFieldEnum)[keyof typeof PaymentLinkScalarFieldEnum]
+
+
   export const PaymentScalarFieldEnum: {
     id: 'id',
     orderId: 'orderId',
@@ -53037,6 +54332,20 @@ export namespace Prisma {
    * Reference to a field of type 'OrderStatus[]'
    */
   export type ListEnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentLinkStatus'
+   */
+  export type EnumPaymentLinkStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentLinkStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentLinkStatus[]'
+   */
+  export type ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentLinkStatus[]'>
     
 
 
@@ -54561,6 +55870,7 @@ export namespace Prisma {
     items?: OrderItemListRelationFilter
     statusHistory?: OrderStatusHistoryListRelationFilter
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
+    paymentLinks?: PaymentLinkListRelationFilter
   }
 
   export type OrderOrderByWithRelationInput = {
@@ -54580,6 +55890,7 @@ export namespace Prisma {
     items?: OrderItemOrderByRelationAggregateInput
     statusHistory?: OrderStatusHistoryOrderByRelationAggregateInput
     payment?: PaymentOrderByWithRelationInput
+    paymentLinks?: PaymentLinkOrderByRelationAggregateInput
   }
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -54602,6 +55913,7 @@ export namespace Prisma {
     items?: OrderItemListRelationFilter
     statusHistory?: OrderStatusHistoryListRelationFilter
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
+    paymentLinks?: PaymentLinkListRelationFilter
   }, "id" | "orderNumber">
 
   export type OrderOrderByWithAggregationInput = {
@@ -54780,6 +56092,91 @@ export namespace Prisma {
     note?: StringNullableWithAggregatesFilter<"OrderStatusHistory"> | string | null
     changedBy?: StringNullableWithAggregatesFilter<"OrderStatusHistory"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"OrderStatusHistory"> | Date | string
+  }
+
+  export type PaymentLinkWhereInput = {
+    AND?: PaymentLinkWhereInput | PaymentLinkWhereInput[]
+    OR?: PaymentLinkWhereInput[]
+    NOT?: PaymentLinkWhereInput | PaymentLinkWhereInput[]
+    id?: StringFilter<"PaymentLink"> | string
+    token?: StringFilter<"PaymentLink"> | string
+    orderId?: StringFilter<"PaymentLink"> | string
+    status?: EnumPaymentLinkStatusFilter<"PaymentLink"> | $Enums.PaymentLinkStatus
+    customerName?: StringNullableFilter<"PaymentLink"> | string | null
+    customerPhone?: StringNullableFilter<"PaymentLink"> | string | null
+    customerEmail?: StringNullableFilter<"PaymentLink"> | string | null
+    customerAddress?: JsonNullableFilter<"PaymentLink">
+    expiresAt?: DateTimeNullableFilter<"PaymentLink"> | Date | string | null
+    createdAt?: DateTimeFilter<"PaymentLink"> | Date | string
+    updatedAt?: DateTimeFilter<"PaymentLink"> | Date | string
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+  }
+
+  export type PaymentLinkOrderByWithRelationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    customerName?: SortOrderInput | SortOrder
+    customerPhone?: SortOrderInput | SortOrder
+    customerEmail?: SortOrderInput | SortOrder
+    customerAddress?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    order?: OrderOrderByWithRelationInput
+  }
+
+  export type PaymentLinkWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    token?: string
+    AND?: PaymentLinkWhereInput | PaymentLinkWhereInput[]
+    OR?: PaymentLinkWhereInput[]
+    NOT?: PaymentLinkWhereInput | PaymentLinkWhereInput[]
+    orderId?: StringFilter<"PaymentLink"> | string
+    status?: EnumPaymentLinkStatusFilter<"PaymentLink"> | $Enums.PaymentLinkStatus
+    customerName?: StringNullableFilter<"PaymentLink"> | string | null
+    customerPhone?: StringNullableFilter<"PaymentLink"> | string | null
+    customerEmail?: StringNullableFilter<"PaymentLink"> | string | null
+    customerAddress?: JsonNullableFilter<"PaymentLink">
+    expiresAt?: DateTimeNullableFilter<"PaymentLink"> | Date | string | null
+    createdAt?: DateTimeFilter<"PaymentLink"> | Date | string
+    updatedAt?: DateTimeFilter<"PaymentLink"> | Date | string
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+  }, "id" | "token">
+
+  export type PaymentLinkOrderByWithAggregationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    customerName?: SortOrderInput | SortOrder
+    customerPhone?: SortOrderInput | SortOrder
+    customerEmail?: SortOrderInput | SortOrder
+    customerAddress?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PaymentLinkCountOrderByAggregateInput
+    _max?: PaymentLinkMaxOrderByAggregateInput
+    _min?: PaymentLinkMinOrderByAggregateInput
+  }
+
+  export type PaymentLinkScalarWhereWithAggregatesInput = {
+    AND?: PaymentLinkScalarWhereWithAggregatesInput | PaymentLinkScalarWhereWithAggregatesInput[]
+    OR?: PaymentLinkScalarWhereWithAggregatesInput[]
+    NOT?: PaymentLinkScalarWhereWithAggregatesInput | PaymentLinkScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PaymentLink"> | string
+    token?: StringWithAggregatesFilter<"PaymentLink"> | string
+    orderId?: StringWithAggregatesFilter<"PaymentLink"> | string
+    status?: EnumPaymentLinkStatusWithAggregatesFilter<"PaymentLink"> | $Enums.PaymentLinkStatus
+    customerName?: StringNullableWithAggregatesFilter<"PaymentLink"> | string | null
+    customerPhone?: StringNullableWithAggregatesFilter<"PaymentLink"> | string | null
+    customerEmail?: StringNullableWithAggregatesFilter<"PaymentLink"> | string | null
+    customerAddress?: JsonNullableWithAggregatesFilter<"PaymentLink">
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"PaymentLink"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"PaymentLink"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PaymentLink"> | Date | string
   }
 
   export type PaymentWhereInput = {
@@ -57950,6 +59347,7 @@ export namespace Prisma {
     items?: OrderItemCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusHistoryCreateNestedManyWithoutOrderInput
     payment?: PaymentCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateInput = {
@@ -57968,6 +59366,7 @@ export namespace Prisma {
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentUncheckedCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUpdateInput = {
@@ -57986,6 +59385,7 @@ export namespace Prisma {
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusHistoryUpdateManyWithoutOrderNestedInput
     payment?: PaymentUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateInput = {
@@ -58004,6 +59404,7 @@ export namespace Prisma {
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderCreateManyInput = {
@@ -58192,6 +59593,103 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     changedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentLinkCreateInput = {
+    id?: string
+    token: string
+    status?: $Enums.PaymentLinkStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerEmail?: string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    order: OrderCreateNestedOneWithoutPaymentLinksInput
+  }
+
+  export type PaymentLinkUncheckedCreateInput = {
+    id?: string
+    token: string
+    orderId: string
+    status?: $Enums.PaymentLinkStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerEmail?: string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentLinkUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    order?: OrderUpdateOneRequiredWithoutPaymentLinksNestedInput
+  }
+
+  export type PaymentLinkUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentLinkCreateManyInput = {
+    id?: string
+    token: string
+    orderId: string
+    status?: $Enums.PaymentLinkStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerEmail?: string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentLinkUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentLinkUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PaymentCreateInput = {
@@ -61242,7 +62740,17 @@ export namespace Prisma {
     isNot?: PaymentWhereInput | null
   }
 
+  export type PaymentLinkListRelationFilter = {
+    every?: PaymentLinkWhereInput
+    some?: PaymentLinkWhereInput
+    none?: PaymentLinkWhereInput
+  }
+
   export type OrderStatusHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PaymentLinkOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -61393,6 +62901,63 @@ export namespace Prisma {
     note?: SortOrder
     changedBy?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type EnumPaymentLinkStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentLinkStatus | EnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentLinkStatusFilter<$PrismaModel> | $Enums.PaymentLinkStatus
+  }
+
+  export type PaymentLinkCountOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    customerName?: SortOrder
+    customerPhone?: SortOrder
+    customerEmail?: SortOrder
+    customerAddress?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PaymentLinkMaxOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    customerName?: SortOrder
+    customerPhone?: SortOrder
+    customerEmail?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PaymentLinkMinOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    customerName?: SortOrder
+    customerPhone?: SortOrder
+    customerEmail?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumPaymentLinkStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentLinkStatus | EnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentLinkStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentLinkStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentLinkStatusFilter<$PrismaModel>
+    _max?: NestedEnumPaymentLinkStatusFilter<$PrismaModel>
   }
 
   export type EnumPaymentStatusFilter<$PrismaModel = never> = {
@@ -63983,6 +65548,13 @@ export namespace Prisma {
     connect?: PaymentWhereUniqueInput
   }
 
+  export type PaymentLinkCreateNestedManyWithoutOrderInput = {
+    create?: XOR<PaymentLinkCreateWithoutOrderInput, PaymentLinkUncheckedCreateWithoutOrderInput> | PaymentLinkCreateWithoutOrderInput[] | PaymentLinkUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: PaymentLinkCreateOrConnectWithoutOrderInput | PaymentLinkCreateOrConnectWithoutOrderInput[]
+    createMany?: PaymentLinkCreateManyOrderInputEnvelope
+    connect?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+  }
+
   export type OrderItemUncheckedCreateNestedManyWithoutOrderInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -64001,6 +65573,13 @@ export namespace Prisma {
     create?: XOR<PaymentCreateWithoutOrderInput, PaymentUncheckedCreateWithoutOrderInput>
     connectOrCreate?: PaymentCreateOrConnectWithoutOrderInput
     connect?: PaymentWhereUniqueInput
+  }
+
+  export type PaymentLinkUncheckedCreateNestedManyWithoutOrderInput = {
+    create?: XOR<PaymentLinkCreateWithoutOrderInput, PaymentLinkUncheckedCreateWithoutOrderInput> | PaymentLinkCreateWithoutOrderInput[] | PaymentLinkUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: PaymentLinkCreateOrConnectWithoutOrderInput | PaymentLinkCreateOrConnectWithoutOrderInput[]
+    createMany?: PaymentLinkCreateManyOrderInputEnvelope
+    connect?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
   }
 
   export type EnumOrderStatusFieldUpdateOperationsInput = {
@@ -64053,6 +65632,20 @@ export namespace Prisma {
     update?: XOR<XOR<PaymentUpdateToOneWithWhereWithoutOrderInput, PaymentUpdateWithoutOrderInput>, PaymentUncheckedUpdateWithoutOrderInput>
   }
 
+  export type PaymentLinkUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<PaymentLinkCreateWithoutOrderInput, PaymentLinkUncheckedCreateWithoutOrderInput> | PaymentLinkCreateWithoutOrderInput[] | PaymentLinkUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: PaymentLinkCreateOrConnectWithoutOrderInput | PaymentLinkCreateOrConnectWithoutOrderInput[]
+    upsert?: PaymentLinkUpsertWithWhereUniqueWithoutOrderInput | PaymentLinkUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: PaymentLinkCreateManyOrderInputEnvelope
+    set?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    disconnect?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    delete?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    connect?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    update?: PaymentLinkUpdateWithWhereUniqueWithoutOrderInput | PaymentLinkUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: PaymentLinkUpdateManyWithWhereWithoutOrderInput | PaymentLinkUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: PaymentLinkScalarWhereInput | PaymentLinkScalarWhereInput[]
+  }
+
   export type OrderItemUncheckedUpdateManyWithoutOrderNestedInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -64089,6 +65682,20 @@ export namespace Prisma {
     delete?: PaymentWhereInput | boolean
     connect?: PaymentWhereUniqueInput
     update?: XOR<XOR<PaymentUpdateToOneWithWhereWithoutOrderInput, PaymentUpdateWithoutOrderInput>, PaymentUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type PaymentLinkUncheckedUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<PaymentLinkCreateWithoutOrderInput, PaymentLinkUncheckedCreateWithoutOrderInput> | PaymentLinkCreateWithoutOrderInput[] | PaymentLinkUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: PaymentLinkCreateOrConnectWithoutOrderInput | PaymentLinkCreateOrConnectWithoutOrderInput[]
+    upsert?: PaymentLinkUpsertWithWhereUniqueWithoutOrderInput | PaymentLinkUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: PaymentLinkCreateManyOrderInputEnvelope
+    set?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    disconnect?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    delete?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    connect?: PaymentLinkWhereUniqueInput | PaymentLinkWhereUniqueInput[]
+    update?: PaymentLinkUpdateWithWhereUniqueWithoutOrderInput | PaymentLinkUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: PaymentLinkUpdateManyWithWhereWithoutOrderInput | PaymentLinkUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: PaymentLinkScalarWhereInput | PaymentLinkScalarWhereInput[]
   }
 
   export type OrderCreateNestedOneWithoutItemsInput = {
@@ -64131,6 +65738,24 @@ export namespace Prisma {
     upsert?: OrderUpsertWithoutStatusHistoryInput
     connect?: OrderWhereUniqueInput
     update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutStatusHistoryInput, OrderUpdateWithoutStatusHistoryInput>, OrderUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type OrderCreateNestedOneWithoutPaymentLinksInput = {
+    create?: XOR<OrderCreateWithoutPaymentLinksInput, OrderUncheckedCreateWithoutPaymentLinksInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutPaymentLinksInput
+    connect?: OrderWhereUniqueInput
+  }
+
+  export type EnumPaymentLinkStatusFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentLinkStatus
+  }
+
+  export type OrderUpdateOneRequiredWithoutPaymentLinksNestedInput = {
+    create?: XOR<OrderCreateWithoutPaymentLinksInput, OrderUncheckedCreateWithoutPaymentLinksInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutPaymentLinksInput
+    upsert?: OrderUpsertWithoutPaymentLinksInput
+    connect?: OrderWhereUniqueInput
+    update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutPaymentLinksInput, OrderUpdateWithoutPaymentLinksInput>, OrderUncheckedUpdateWithoutPaymentLinksInput>
   }
 
   export type OrderCreateNestedOneWithoutPaymentInput = {
@@ -64896,6 +66521,23 @@ export namespace Prisma {
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumPaymentLinkStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentLinkStatus | EnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentLinkStatusFilter<$PrismaModel> | $Enums.PaymentLinkStatus
+  }
+
+  export type NestedEnumPaymentLinkStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentLinkStatus | EnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentLinkStatus[] | ListEnumPaymentLinkStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentLinkStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentLinkStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentLinkStatusFilter<$PrismaModel>
+    _max?: NestedEnumPaymentLinkStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -65229,6 +66871,7 @@ export namespace Prisma {
     items?: OrderItemCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusHistoryCreateNestedManyWithoutOrderInput
     payment?: PaymentCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutUserInput = {
@@ -65246,6 +66889,7 @@ export namespace Prisma {
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentUncheckedCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutUserInput = {
@@ -69212,6 +70856,42 @@ export namespace Prisma {
     create: XOR<PaymentCreateWithoutOrderInput, PaymentUncheckedCreateWithoutOrderInput>
   }
 
+  export type PaymentLinkCreateWithoutOrderInput = {
+    id?: string
+    token: string
+    status?: $Enums.PaymentLinkStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerEmail?: string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentLinkUncheckedCreateWithoutOrderInput = {
+    id?: string
+    token: string
+    status?: $Enums.PaymentLinkStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerEmail?: string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PaymentLinkCreateOrConnectWithoutOrderInput = {
+    where: PaymentLinkWhereUniqueInput
+    create: XOR<PaymentLinkCreateWithoutOrderInput, PaymentLinkUncheckedCreateWithoutOrderInput>
+  }
+
+  export type PaymentLinkCreateManyOrderInputEnvelope = {
+    data: PaymentLinkCreateManyOrderInput | PaymentLinkCreateManyOrderInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutOrdersInput = {
     update: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
     create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
@@ -69366,6 +71046,39 @@ export namespace Prisma {
     transactions?: PaymentTransactionUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
+  export type PaymentLinkUpsertWithWhereUniqueWithoutOrderInput = {
+    where: PaymentLinkWhereUniqueInput
+    update: XOR<PaymentLinkUpdateWithoutOrderInput, PaymentLinkUncheckedUpdateWithoutOrderInput>
+    create: XOR<PaymentLinkCreateWithoutOrderInput, PaymentLinkUncheckedCreateWithoutOrderInput>
+  }
+
+  export type PaymentLinkUpdateWithWhereUniqueWithoutOrderInput = {
+    where: PaymentLinkWhereUniqueInput
+    data: XOR<PaymentLinkUpdateWithoutOrderInput, PaymentLinkUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type PaymentLinkUpdateManyWithWhereWithoutOrderInput = {
+    where: PaymentLinkScalarWhereInput
+    data: XOR<PaymentLinkUpdateManyMutationInput, PaymentLinkUncheckedUpdateManyWithoutOrderInput>
+  }
+
+  export type PaymentLinkScalarWhereInput = {
+    AND?: PaymentLinkScalarWhereInput | PaymentLinkScalarWhereInput[]
+    OR?: PaymentLinkScalarWhereInput[]
+    NOT?: PaymentLinkScalarWhereInput | PaymentLinkScalarWhereInput[]
+    id?: StringFilter<"PaymentLink"> | string
+    token?: StringFilter<"PaymentLink"> | string
+    orderId?: StringFilter<"PaymentLink"> | string
+    status?: EnumPaymentLinkStatusFilter<"PaymentLink"> | $Enums.PaymentLinkStatus
+    customerName?: StringNullableFilter<"PaymentLink"> | string | null
+    customerPhone?: StringNullableFilter<"PaymentLink"> | string | null
+    customerEmail?: StringNullableFilter<"PaymentLink"> | string | null
+    customerAddress?: JsonNullableFilter<"PaymentLink">
+    expiresAt?: DateTimeNullableFilter<"PaymentLink"> | Date | string | null
+    createdAt?: DateTimeFilter<"PaymentLink"> | Date | string
+    updatedAt?: DateTimeFilter<"PaymentLink"> | Date | string
+  }
+
   export type OrderCreateWithoutItemsInput = {
     id?: string
     orderNumber: string
@@ -69381,6 +71094,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutOrdersInput
     statusHistory?: OrderStatusHistoryCreateNestedManyWithoutOrderInput
     payment?: PaymentCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutItemsInput = {
@@ -69398,6 +71112,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     statusHistory?: OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentUncheckedCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutItemsInput = {
@@ -69534,6 +71249,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
     statusHistory?: OrderStatusHistoryUpdateManyWithoutOrderNestedInput
     payment?: PaymentUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -69551,6 +71267,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     statusHistory?: OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type ProductUpsertWithoutOrderItemsInput = {
@@ -69677,6 +71394,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     payment?: PaymentCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutStatusHistoryInput = {
@@ -69694,6 +71412,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentUncheckedCreateNestedOneWithoutOrderInput
+    paymentLinks?: PaymentLinkUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutStatusHistoryInput = {
@@ -69727,6 +71446,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     payment?: PaymentUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
@@ -69743,6 +71463,95 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    payment?: PaymentUncheckedUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderCreateWithoutPaymentLinksInput = {
+    id?: string
+    orderNumber: string
+    status?: $Enums.OrderStatus
+    subtotal: Decimal | DecimalJsLike | number | string
+    tax: Decimal | DecimalJsLike | number | string
+    shipping: Decimal | DecimalJsLike | number | string
+    total: Decimal | DecimalJsLike | number | string
+    currency?: string
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutOrdersInput
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+    statusHistory?: OrderStatusHistoryCreateNestedManyWithoutOrderInput
+    payment?: PaymentCreateNestedOneWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutPaymentLinksInput = {
+    id?: string
+    userId: string
+    orderNumber: string
+    status?: $Enums.OrderStatus
+    subtotal: Decimal | DecimalJsLike | number | string
+    tax: Decimal | DecimalJsLike | number | string
+    shipping: Decimal | DecimalJsLike | number | string
+    total: Decimal | DecimalJsLike | number | string
+    currency?: string
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    statusHistory?: OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
+    payment?: PaymentUncheckedCreateNestedOneWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutPaymentLinksInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutPaymentLinksInput, OrderUncheckedCreateWithoutPaymentLinksInput>
+  }
+
+  export type OrderUpsertWithoutPaymentLinksInput = {
+    update: XOR<OrderUpdateWithoutPaymentLinksInput, OrderUncheckedUpdateWithoutPaymentLinksInput>
+    create: XOR<OrderCreateWithoutPaymentLinksInput, OrderUncheckedCreateWithoutPaymentLinksInput>
+    where?: OrderWhereInput
+  }
+
+  export type OrderUpdateToOneWithWhereWithoutPaymentLinksInput = {
+    where?: OrderWhereInput
+    data: XOR<OrderUpdateWithoutPaymentLinksInput, OrderUncheckedUpdateWithoutPaymentLinksInput>
+  }
+
+  export type OrderUpdateWithoutPaymentLinksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutOrdersNestedInput
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+    statusHistory?: OrderStatusHistoryUpdateManyWithoutOrderNestedInput
+    payment?: PaymentUpdateOneWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutPaymentLinksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    statusHistory?: OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutOrderNestedInput
   }
 
@@ -69761,6 +71570,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusHistoryCreateNestedManyWithoutOrderInput
+    paymentLinks?: PaymentLinkCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutPaymentInput = {
@@ -69778,6 +71588,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
+    paymentLinks?: PaymentLinkUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutPaymentInput = {
@@ -69845,6 +71656,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusHistoryUpdateManyWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutPaymentInput = {
@@ -69862,6 +71674,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type PaymentTransactionUpsertWithWhereUniqueWithoutPaymentInput = {
@@ -72737,6 +74550,7 @@ export namespace Prisma {
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusHistoryUpdateManyWithoutOrderNestedInput
     payment?: PaymentUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutUserInput = {
@@ -72754,6 +74568,7 @@ export namespace Prisma {
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutOrderNestedInput
+    paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateManyWithoutUserInput = {
@@ -73819,6 +75634,19 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type PaymentLinkCreateManyOrderInput = {
+    id?: string
+    token: string
+    status?: $Enums.PaymentLinkStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerEmail?: string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type OrderItemUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     variantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -73874,6 +75702,45 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     changedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentLinkUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentLinkUncheckedUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentLinkUncheckedUpdateManyWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    status?: EnumPaymentLinkStatusFieldUpdateOperationsInput | $Enums.PaymentLinkStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableJsonNullValueInput | InputJsonValue
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PaymentTransactionCreateManyPaymentInput = {

@@ -369,6 +369,20 @@ exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PaymentLinkScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  orderId: 'orderId',
+  status: 'status',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  customerEmail: 'customerEmail',
+  customerAddress: 'customerAddress',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PaymentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -663,6 +677,12 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   Refunded: 'Refunded'
 };
 
+exports.PaymentLinkStatus = exports.$Enums.PaymentLinkStatus = {
+  Active: 'Active',
+  Paid: 'Paid',
+  Expired: 'Expired'
+};
+
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   Pending: 'Pending',
   Processing: 'Processing',
@@ -712,6 +732,7 @@ exports.Prisma.ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
+  PaymentLink: 'PaymentLink',
   Payment: 'Payment',
   PaymentTransaction: 'PaymentTransaction',
   Quote: 'Quote',

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server"
 import { checkRateLimit } from "@/lib/rate-limit"
 
 const publicPaths = [
-  "/", "/products", "/categories", "/search", "/cart", "/brands",
+  "/", "/products", "/categories", "/search", "/cart", "/brands", "/pay",
   "/contact", "/api/products", "/api/categories", "/api/auth", "/api/search",
   "/sitemap.xml", "/robots.txt",
 ]
