@@ -1,0 +1,29 @@
+=== QUESTIONS FOR EVPAY SUPPORT ===
+
+Server IP to whitelist: 197.186.18.131
+
+1. CHECKOUT URL
+   We get 404 on https://checkout.evmak.com/checkout/{clientId}?data=...&sig=...
+   (clientId: 8488948317b34dd7b48fa56f7297)
+
+   Also tried: https://checkout.evpay.co.tz/checkout/{clientId} → 404
+
+2. RECONCILIATION API
+   GET https://checkout.evmak.com/api/v1/reconciliation/TEST-123 returns:
+   {"status":"error","message":"Invalid client_id or inactive merchant account."}
+   
+   This suggests our merchant account is inactive. Please activate it.
+
+3. MNO (MOBILE MONEY)
+   https://vodaapi.evmak.com/test/ returns:
+   {"response_code":403,"response_desc":"User gkgeneral is not registered"}
+   
+   Please register username "gkgeneral" on the MNO system.
+
+4. SANDBOX
+   Is sandbox-api.evpay.co.tz supposed to be accessible?
+   It doesn't resolve in DNS (NXDOMAIN).
+
+5. POST API (v3)
+   The docs show POST /api/checkout/v3/both with X-Timestamp and X-Signature headers.
+   What sigKey should we use? Is it the same as clientSecret?
