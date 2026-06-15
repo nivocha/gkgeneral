@@ -86,7 +86,7 @@ export async function POST(request: Request) {
           status: prismaStatus,
           amount: payment.amount,
           reference,
-          providerPayload: payload as Record<string, unknown>,
+          providerPayload: payload as never,
           metadata: JSON.stringify({
             rawPayload: rawBody,
             evmakStatus,
