@@ -125,7 +125,7 @@ export async function initiatePayment(
         amount: order.total,
         reference: evmakResponse.reference,
         nonce,
-        providerPayload: evmakResponse as Record<string, unknown>,
+        providerPayload: evmakResponse as never,
         metadata: JSON.stringify({ initiatedBy: user.id }),
       },
     })

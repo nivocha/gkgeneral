@@ -84,7 +84,7 @@ export async function initiateMnoPayment(data: {
           reference: mnoReference,
           nonce,
           externalReference: mnoResponse.transaction_id,
-          providerPayload: mnoResponse as Record<string, unknown>,
+          providerPayload: mnoResponse as never,
           metadata: JSON.stringify({
             initiatedBy: user.id,
             provider: validated.provider,

@@ -75,7 +75,7 @@ export async function reconcilePayment(reference: string) {
         const updateData: Record<string, unknown> = {
           status: prismaStatus,
           gatewayStatus: providerStatus,
-          gatewayResponse: providerData as Record<string, unknown>,
+          gatewayResponse: providerData as never,
         }
         if (prismaStatus === "Paid" && !payment.paidAt) {
           updateData.paidAt = providerData.paidAt ? new Date(providerData.paidAt) : new Date()
@@ -96,7 +96,7 @@ export async function reconcilePayment(reference: string) {
             amount: payment.amount,
             reference: payment.reference,
             externalReference: providerData.transactionReference,
-            providerPayload: providerData as Record<string, unknown>,
+            providerPayload: providerData as never,
             metadata: JSON.stringify({
               reconciledBy: user.id,
               previousStatus: localStatus,
@@ -115,7 +115,7 @@ export async function reconcilePayment(reference: string) {
     providerStatus,
     matched,
     repaired,
-    providerData: providerData as unknown as Record<string, unknown>,
+    providerData: providerData as unknown as never,
   }
 
   const auditAction = matched

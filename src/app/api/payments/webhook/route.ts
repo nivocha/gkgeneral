@@ -92,7 +92,7 @@ export async function POST(request: Request) {
       const updateData: Record<string, unknown> = {
         status: prismaStatus,
         gatewayStatus: payload.gateway_status || payload.status,
-        gatewayResponse: payload as Record<string, unknown>,
+        gatewayResponse: payload as never,
       }
 
       if (prismaStatus === "Paid") {
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
           reference: payload.reference,
           nonce,
           externalReference: payload.transaction_reference,
-          providerPayload: payload as Record<string, unknown>,
+          providerPayload: payload as never,
           metadata: JSON.stringify({
             webhookPayload: rawBody,
             event: payload.event,

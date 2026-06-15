@@ -222,7 +222,7 @@ export async function getInventoryList(params?: z.infer<typeof GetInventorySchem
     let current = obj
     for (let i = 0; i < keys.length - 1; i++) {
       current[keys[i]] ??= {}
-      current = current[keys[i]] as Record<string, unknown>
+      current = current[keys[i]] as never
     }
     current[keys[keys.length - 1]] = value
   }
@@ -327,8 +327,8 @@ export async function getInventoryMovements(params?: z.infer<typeof GetMovements
   }
   if (validated.fromDate || validated.toDate) {
     where.createdAt = {}
-    if (validated.fromDate) (where.createdAt as Record<string, unknown>).gte = new Date(validated.fromDate)
-    if (validated.toDate) (where.createdAt as Record<string, unknown>).lte = new Date(validated.toDate)
+    if (validated.fromDate) (where.createdAt as never).gte = new Date(validated.fromDate)
+    if (validated.toDate) (where.createdAt as never).lte = new Date(validated.toDate)
   }
 
   const orderBy: Record<string, string> = {}

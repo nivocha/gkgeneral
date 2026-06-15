@@ -87,7 +87,7 @@ export async function verifyPayment(paymentId: string) {
         reference: payment.reference,
         nonce,
         externalReference: evmakResponse.transactionReference,
-        providerPayload: evmakResponse as Record<string, unknown>,
+        providerPayload: evmakResponse as never,
         metadata: JSON.stringify({ verifiedBy: user.id }),
       },
     })

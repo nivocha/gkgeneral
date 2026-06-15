@@ -80,7 +80,7 @@ export async function refundPayment(
         reference: payment.reference,
         nonce,
         externalReference: evmakResponse.transactionReference,
-        providerPayload: evmakResponse as Record<string, unknown>,
+        providerPayload: evmakResponse as never,
         metadata: JSON.stringify({
           refundedBy: user.id,
           reason: validated.reason ?? null,

@@ -66,7 +66,7 @@ export async function POST(request: Request) {
           gatewayStatus: transactionStatus,
           paidAt: isSuccess ? new Date() : undefined,
           transactionReference: (payload.TransID as string) || undefined,
-          gatewayResponse: payload as Record<string, unknown>,
+          gatewayResponse: payload as never,
         },
       })
 
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
           amount: payment.amount,
           reference,
           externalReference: (payload.TransID as string) || undefined,
-          providerPayload: payload as Record<string, unknown>,
+          providerPayload: payload as never,
           metadata: JSON.stringify({
             rawPayload: rawBody,
             mnoTransactionId: payload.TransID,

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       const updateData: Record<string, unknown> = {
         status: prismaStatus,
         gatewayStatus: evmakStatus,
-        gatewayResponse: payload as Record<string, unknown>,
+        gatewayResponse: payload as never,
       }
 
       if (prismaStatus === "Paid") {
