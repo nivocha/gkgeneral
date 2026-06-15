@@ -38,7 +38,7 @@ export async function proxy(request: NextRequest) {
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
-        "upgrade-insecure-requests",
+        
       ].join("; ")
     )
     response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
