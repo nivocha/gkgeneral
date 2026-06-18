@@ -7,6 +7,44 @@ import { PAYMENT_AUDIT_ACTIONS } from "@/features/payments/lib/audit-actions"
 import { commitInventoryForOrder, releaseInventoryForOrder } from "@/features/payments/lib/inventory"
 import type { PaymentStatus } from "@/lib/prisma"
 
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const reference = searchParams.get("reference") || searchParams.get("transaction_reference")
+
+  let redirectUrl = `${new URL(request.url).origin}/`
+  if (reference) {
+    const payment = await prisma.payment.findFirst({
+      where: { reference },
+      include: { order: { select: { id: true, orderNumber: true } } },
+    })
+    if (payment) {
+      const link = await prisma.paymentLink.findFirst({ where: { orderId: payment.orderId } })
+      if (link) redirectUrl = `${new URL(request.url).origin}/pay/${link.token}/success`
+      else redirectUrl = `${new URL(request.url).origin}/account/orders`
+    }
+  }
+
+  return new Response(
+    `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Redirecting...</title></head>
+<body>
+<script>
+  var dest = ${JSON.stringify(redirectUrl)};
+  if (window.top && window.top !== window.self) {
+    window.top.location.href = dest;
+  } else {
+    window.location.href = dest;
+  }
+<\/script>
+<noscript><meta http-equiv="refresh" content="0;url='${redirectUrl}'"></noscript>
+<p>Redirecting to <a href="${redirectUrl}">${redirectUrl}</a></p>
+</body>
+</html>`,
+    { status: 200, headers: { "Content-Type": "text/html" } }
+  )
+}
+
 export async function POST(request: Request) {
   try {
     const rawBody = await request.text()
