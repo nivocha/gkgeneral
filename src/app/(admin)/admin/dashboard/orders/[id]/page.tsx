@@ -4,7 +4,6 @@ import { getAdminOrderById } from "@/features/orders/actions"
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge"
 import { OrderItemsTable } from "@/features/orders/components/order-items-table"
 import { OrderStatusTimeline } from "@/features/orders/components/order-status-timeline"
-import { AdminOrderStatusDropdown } from "@/features/orders/components/admin-order-status-dropdown"
 import { requireAuth } from "@/lib/auth/session"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -50,7 +49,6 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           </div>
           <div className="flex items-center gap-3">
             <OrderStatusBadge status={order.status} />
-            <AdminOrderStatusDropdown orderId={order.id} currentStatus={order.status} />
           </div>
         </div>
       </div>
