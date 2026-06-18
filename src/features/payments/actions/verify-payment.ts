@@ -45,9 +45,14 @@ export async function verifyPayment(paymentId: string) {
     return { success: false, message: getSafeErrorMessage(error) }
   }
 
-  const newStatus = mapEvMakStatusToPaymentStatus(evmakResponse.status)
+  if (evmakResponse.status !== "success" || !evmakResponse.data) {
+    return { success: false, message: evmakResponse.message || "Failed to verify payment status" }
+  }
+
+  const txData = evmakResponse.data
+  const newStatus = mapEvMakStatusToPaymentStatus(txData.status)
   if (!newStatus) {
-    return { success: false, message: `Unknown payment status: ${evmakResponse.status}` }
+    return { success: false, message: `Unknown payment status: ${txData.status}` }
   }
 
   const currentStatus = payment.status as PaymentStatus
@@ -62,16 +67,15 @@ export async function verifyPayment(paymentId: string) {
   await prisma.$transaction(async (tx) => {
     const updateData: Record<string, unknown> = {
       status: newStatus,
-      gatewayStatus: evmakResponse.gatewayStatus || evmakResponse.status,
+      gatewayStatus: txData.status,
     }
 
     if (newStatus === "Paid") {
-      updateData.paidAt = new Date()
-      if (evmakResponse.transactionReference) updateData.transactionReference = evmakResponse.transactionReference
-      if (evmakResponse.approvalCode) updateData.approvalCode = evmakResponse.approvalCode
-      if (evmakResponse.cardType) updateData.cardType = evmakResponse.cardType
-      if (evmakResponse.cardMasked) updateData.cardMasked = evmakResponse.cardMasked
-      if (evmakResponse.paymentId) updateData.paymentId = evmakResponse.paymentId
+      updateData.paidAt = txData.authorized_at ? new Date(txData.authorized_at) : new Date()
+      if (txData.payment_id) updateData.transactionReference = txData.payment_id
+      if (txData.approval_code) updateData.approvalCode = txData.approval_code
+      if (txData.card_type) updateData.cardType = txData.card_type
+      if (txData.card_number) updateData.cardMasked = txData.card_number
     }
 
     await tx.payment.update({
@@ -86,7 +90,7 @@ export async function verifyPayment(paymentId: string) {
         amount: payment.amount,
         reference: payment.reference,
         nonce,
-        externalReference: evmakResponse.transactionReference,
+        externalReference: txData.payment_id,
         providerPayload: evmakResponse as never,
         metadata: JSON.stringify({ verifiedBy: user.id }),
       },

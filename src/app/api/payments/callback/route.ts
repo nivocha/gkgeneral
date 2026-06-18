@@ -32,8 +32,9 @@ export async function GET(request: Request) {
     try {
       const { evmakClient } = await import("@/features/payments/lib/evmak-client")
       const result = await evmakClient.reconcilePayment(payment.reference || payment.id)
-      if (result.success && result.status) {
-        const newStatus = mapEvMakStatusToPaymentStatus(result.status)
+      if (result.status === "success" && result.data?.status) {
+        const txStatus = result.data.status
+        const newStatus = mapEvMakStatusToPaymentStatus(txStatus)
         if (newStatus && newStatus !== payment.status) {
           try {
             assertValidTransition(payment.status as PaymentStatus, newStatus)
@@ -41,10 +42,10 @@ export async function GET(request: Request) {
               where: { id: payment.id },
               data: {
                 status: newStatus,
-                gatewayStatus: result.status,
-                ...(result.transactionReference ? { transactionReference: result.transactionReference } : {}),
-                ...(result.approvalCode ? { approvalCode: result.approvalCode } : {}),
-                ...(newStatus === "Paid" ? { paidAt: new Date() } : {}),
+                gatewayStatus: txStatus,
+                ...(result.data.payment_id ? { transactionReference: result.data.payment_id } : {}),
+                ...(result.data.approval_code ? { approvalCode: result.data.approval_code } : {}),
+                ...(newStatus === "Paid" ? { paidAt: result.data.authorized_at ? new Date(result.data.authorized_at) : new Date() } : {}),
               },
             })
             if (newStatus === "Paid") {

@@ -37,19 +37,7 @@ export type InitializePaymentResponse = {
   message?: string
 }
 
-export type VerifyPaymentResponse = {
-  success: boolean
-  status: "Pending" | "Processing" | "Paid" | "Failed" | "Refunded" | "Cancelled"
-  reference: string
-  paidAt: string | null
-  gatewayStatus?: string
-  transactionReference?: string
-  approvalCode?: string
-  cardType?: string
-  cardMasked?: string
-  paymentId?: string
-  message?: string
-}
+export type VerifyPaymentResponse = ReconciliationResponse
 
 export type RefundPaymentResponse = {
   success: boolean
@@ -58,17 +46,22 @@ export type RefundPaymentResponse = {
   message?: string
 }
 
-export type ReconciliationResponse = {
-  success: boolean
+export type ReconciliationData = {
   reference: string
   status: string
-  amount: number
+  amount: string
   currency: string
-  transactionReference?: string
-  approvalCode?: string
-  paymentId?: string
-  paidAt?: string
-  gatewayResponse?: Record<string, unknown>
+  payment_id?: string
+  card_number?: string
+  card_type?: string
+  approval_code?: string
+  authorized_at?: string
+  message?: string | null
+}
+
+export type ReconciliationResponse = {
+  status: "success" | "error"
+  data?: ReconciliationData
   message?: string
 }
 

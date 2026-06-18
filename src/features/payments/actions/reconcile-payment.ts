@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth/session"
 import { prisma } from "@/lib/prisma"
 import { logAuditEvent } from "@/lib/logger/prisma"
 import { evmakClient } from "@/features/payments/lib/evmak-client"
+import { mapEvMakStatusToPaymentStatus } from "@/features/payments/lib/payment-status"
 import { PAYMENT_AUDIT_ACTIONS } from "@/features/payments/lib/audit-actions"
 import { getSafeErrorMessage } from "@/features/payments/lib/errors"
 import { isPaymentsConfigured } from "@/lib/env"
@@ -46,9 +47,9 @@ export async function reconcilePayment(reference: string) {
     metadata: { reference, localStatus: payment.status },
   })
 
-  let providerData: Awaited<ReturnType<typeof evmakClient.reconcilePayment>>
+  let providerResponse: Awaited<ReturnType<typeof evmakClient.reconcilePayment>>
   try {
-    providerData = await evmakClient.reconcilePayment(reference)
+    providerResponse = await evmakClient.reconcilePayment(reference)
   } catch (error) {
     return {
       success: false,
@@ -57,65 +58,66 @@ export async function reconcilePayment(reference: string) {
     }
   }
 
+  if (providerResponse.status !== "success" || !providerResponse.data) {
+    return {
+      success: false,
+      message: providerResponse.message || "Provider returned error",
+      data: null,
+    }
+  }
+
+  const txData = providerResponse.data
   const localStatus = payment.status
-  const providerStatus = providerData.status
-  const matched = localStatus.toLowerCase() === providerStatus.toLowerCase()
+  const txStatus = txData.status
+  const providerStatus = mapEvMakStatusToPaymentStatus(txStatus)
+  const matched = localStatus === providerStatus
 
   let repaired = false
 
-  if (!matched) {
-    const prismaStatus = providerStatus === "completed" ? "Paid"
-      : providerStatus === "failed" ? "Failed"
-      : providerStatus === "refunded" ? "Refunded"
-      : providerStatus === "cancelled" ? "Cancelled"
-      : null
+  if (!matched && providerStatus) {
+    await prisma.$transaction(async (tx) => {
+      const updateData: Record<string, unknown> = {
+        status: providerStatus,
+        gatewayStatus: txStatus,
+        gatewayResponse: providerResponse as never,
+      }
+      if (providerStatus === "Paid" && !payment.paidAt) {
+        updateData.paidAt = txData.authorized_at ? new Date(txData.authorized_at) : new Date()
+      }
+      if (txData.approval_code) updateData.approvalCode = txData.approval_code
+      if (txData.payment_id) updateData.transactionReference = txData.payment_id
 
-    if (prismaStatus) {
-      await prisma.$transaction(async (tx) => {
-        const updateData: Record<string, unknown> = {
-          status: prismaStatus,
-          gatewayStatus: providerStatus,
-          gatewayResponse: providerData as never,
-        }
-        if (prismaStatus === "Paid" && !payment.paidAt) {
-          updateData.paidAt = providerData.paidAt ? new Date(providerData.paidAt) : new Date()
-        }
-        if (providerData.approvalCode) updateData.approvalCode = providerData.approvalCode
-        if (providerData.transactionReference) updateData.transactionReference = providerData.transactionReference
-        if (providerData.paymentId) updateData.paymentId = providerData.paymentId
-
-        await tx.payment.update({
-          where: { id: payment.id },
-          data: updateData as Parameters<typeof tx.payment.update>[0]["data"],
-        })
-
-        await tx.paymentTransaction.create({
-          data: {
-            paymentId: payment.id,
-            status: "Paid",
-            amount: payment.amount,
-            reference: payment.reference,
-            externalReference: providerData.transactionReference,
-            providerPayload: providerData as never,
-            metadata: JSON.stringify({
-              reconciledBy: user.id,
-              previousStatus: localStatus,
-              providerStatus,
-            }),
-          },
-        })
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: updateData as Parameters<typeof tx.payment.update>[0]["data"],
       })
 
-      repaired = true
-    }
+      await tx.paymentTransaction.create({
+        data: {
+          paymentId: payment.id,
+          status: providerStatus,
+          amount: payment.amount,
+          reference: payment.reference,
+          externalReference: txData.payment_id,
+          providerPayload: providerResponse as never,
+          metadata: JSON.stringify({
+            reconciledBy: user.id,
+            previousStatus: localStatus,
+            providerStatus: txStatus,
+          }),
+        },
+      })
+    })
+
+    repaired = true
   }
 
   const result: ReconciliationResult = {
     localStatus,
-    providerStatus,
+    providerStatus: txStatus,
     matched,
     repaired,
-    providerData: providerData as unknown as never,
+    providerData: providerResponse as unknown as never,
   }
 
   const auditAction = matched
@@ -132,9 +134,9 @@ export async function reconcilePayment(reference: string) {
     description: matched
       ? `Reconciliation OK for ${reference}`
       : repaired
-        ? `Reconciliation repaired: ${localStatus} -> ${providerStatus}`
-        : `Reconciliation mismatch: local=${localStatus}, provider=${providerStatus}`,
-    metadata: { reference, localStatus, providerStatus, matched, repaired },
+        ? `Reconciliation repaired: ${localStatus} -> ${txStatus}`
+        : `Reconciliation mismatch: local=${localStatus}, provider=${txStatus}`,
+    metadata: { reference, localStatus, providerStatus: txStatus, matched, repaired },
   })
 
   revalidatePath(`/admin/dashboard/payments/${payment.id}`)
