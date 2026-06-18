@@ -87,7 +87,7 @@ export async function createAdminOrder(data: AdminCreateOrderInput) {
         tax,
         shipping: 0,
         total,
-        currency: "TZS",
+        currency: "USD",
         notes: validated.notes ?? null,
         items: {
           create: validated.items.map((i) => ({
