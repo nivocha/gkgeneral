@@ -151,7 +151,7 @@ export async function initiatePaymentLinkPayment(
 
   const callbackUrl = `${getBaseUrl()}/api/payments/callback`
   const cancelUrl = `${getBaseUrl()}/pay/${token}`
-  const returnUrl = `${getBaseUrl()}/pay/${token}/success`
+  const returnUrl = callbackUrl
 
   const customerName = (link.customerName || "").split(/\s+/)
 
