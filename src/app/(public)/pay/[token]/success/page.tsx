@@ -6,7 +6,8 @@ import { formatDateTime } from "@/lib/utils"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, Printer } from "lucide-react"
+import { CheckCircle } from "lucide-react"
+import { PrintButton } from "./client"
 
 export const dynamic = "force-dynamic"
 
@@ -83,9 +84,7 @@ export default async function PaySuccessPage({ params }: { params: Promise<{ tok
       <Card className="mb-6 print:shadow-none print:border-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Receipt</CardTitle>
-          <Button variant="outline" size="sm" onClick={() => window.print()}>
-            <Printer className="h-4 w-4 mr-2" /> Print
-          </Button>
+          <PrintButton />
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="border-b pb-3">
