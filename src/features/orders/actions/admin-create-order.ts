@@ -8,12 +8,10 @@ import { generateOrderNumber } from "@/lib/utils"
 import { logAuditEvent } from "@/lib/logger/prisma"
 
 const adminCreateOrderSchema = z.object({
-  customerName: z.string().min(1, "Customer name is required"),
-  customerEmail: z.string().email("Valid email is required"),
-  customerPhone: z.string().min(5, "Phone number is required"),
-  shippingMethod: z.enum(["standard", "express", "same_day"]),
-  paymentMethod: z.enum(["bank_transfer", "mobile_money", "credit_card"]).default("bank_transfer"),
   notes: z.string().optional(),
+  chargeVat: z.boolean().default(false),
+  totalOverride: z.number().nonnegative().optional(),
+  adjustmentReason: z.string().optional(),
   items: z.array(z.object({
     productId: z.string(),
     name: z.string(),
@@ -66,43 +64,30 @@ export async function createAdminOrder(data: AdminCreateOrderInput) {
   const validated = adminCreateOrderSchema.parse(data)
 
   const subtotal = validated.items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const shippingRates: Record<string, number> = { standard: 0, express: 15000, same_day: 35000 }
-  const shipping = shippingRates[validated.shippingMethod] ?? 0
   const taxRate = 0.18
-  const tax = Math.round(subtotal * taxRate * 100) / 100
-  const total = Math.round((subtotal + tax + shipping) * 100) / 100
+  const subtotalWithTax = validated.chargeVat
+    ? Math.round(subtotal * (1 + taxRate) * 100) / 100
+    : subtotal
+  const calculatedTotal = Math.round(subtotalWithTax * 100) / 100
+  const total = validated.totalOverride !== undefined
+    ? Math.round(validated.totalOverride * 100) / 100
+    : calculatedTotal
+  const tax = validated.chargeVat
+    ? Math.round(subtotal * taxRate * 100) / 100
+    : 0
   const orderNumber = generateOrderNumber(crypto.randomUUID())
-
-  let customerId = admin.id
-  if (validated.customerEmail !== admin.email) {
-    const existing = await prisma.user.findUnique({ where: { email: validated.customerEmail } })
-    if (existing) {
-      customerId = existing.id
-    } else {
-      const created = await prisma.user.create({
-        data: {
-          name: validated.customerName,
-          email: validated.customerEmail,
-          phone: validated.customerPhone,
-          role: "customer",
-          emailVerified: false,
-        },
-      })
-      customerId = created.id
-    }
-  }
 
   const order = await prisma.$transaction(async (tx) => {
     const created = await tx.order.create({
       data: {
-        userId: customerId,
+        userId: admin.id,
         orderNumber,
         status: "Pending",
         subtotal,
         tax,
-        shipping,
+        shipping: 0,
         total,
-        currency: "USD",
+        currency: "TZS",
         notes: validated.notes ?? null,
         items: {
           create: validated.items.map((i) => ({
@@ -118,15 +103,7 @@ export async function createAdminOrder(data: AdminCreateOrderInput) {
           create: {
             status: "Pending",
             changedBy: admin.id,
-            note: `Order created by admin for ${validated.customerName}`,
-          },
-        },
-        payment: {
-          create: {
-            method: validated.paymentMethod,
-            status: "Pending",
-            amount: total,
-            currency: "USD",
+            note: validated.adjustmentReason || "Order created by admin",
           },
         },
       },
@@ -171,8 +148,8 @@ export async function createAdminOrder(data: AdminCreateOrderInput) {
     action: "CREATE",
     entity: "order",
     entityId: order.id,
-    description: `Admin created order ${orderNumber} for ${validated.customerName}`,
-    metadata: { total, itemCount: validated.items.length, customerEmail: validated.customerEmail },
+    description: `Admin created order ${orderNumber}`,
+    metadata: { total, itemCount: validated.items.length },
   })
 
   revalidatePath("/admin/dashboard/orders")

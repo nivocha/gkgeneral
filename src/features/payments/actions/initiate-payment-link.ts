@@ -9,10 +9,11 @@ import { generateNonce } from "@/features/payments/lib/signature"
 import { createMnoPayment, generateMnoReference } from "@/features/payments/lib/mno"
 import { revalidatePath } from "next/cache"
 import { getSafeErrorMessage } from "@/features/payments/lib/errors"
+import { getBaseUrl } from "@/lib/utils"
 
 export async function initiatePaymentLinkPayment(
   token: string,
-  options?: { method?: string; mnoProvider?: string }
+  options?: { method?: string; mnoProvider?: string; amount?: number }
 ) {
   const link = await prisma.paymentLink.findUnique({
     where: { token },
@@ -20,7 +21,7 @@ export async function initiatePaymentLinkPayment(
       order: {
         include: {
           user: { select: { email: true, phone: true } },
-          payment: { select: { id: true, status: true } },
+          payment: { select: { id: true, status: true, gatewayStatus: true } },
         },
       },
     },
@@ -37,7 +38,16 @@ export async function initiatePaymentLinkPayment(
   const payment = order.payment
 
   if (!payment) return { success: false, message: "No payment record found" }
-  if (payment.status !== "Pending") return { success: false, message: `Payment is already ${payment.status}` }
+  if (payment.status === "Paid" || payment.status === "Refunded") {
+    return { success: false, message: `Payment is already ${payment.status}` }
+  }
+  if (payment.status === "Processing") {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: "Pending", gatewayStatus: "pending" },
+    })
+    payment.status = "Pending"
+  }
 
   if (!isPaymentsConfigured()) {
     await logAuditEvent({
@@ -51,20 +61,23 @@ export async function initiatePaymentLinkPayment(
   }
 
   const method = options?.method || "credit_card"
+  const payAmount = options?.amount !== undefined ? Number(options.amount) : Number(order.total)
+
+  if (payAmount <= 0) return { success: false, message: "Invalid payment amount" }
 
   if (method === "mobile_money") {
     if (!link.customerPhone) {
       return { success: false, message: "Phone number is required for mobile money" }
     }
     const mnoRef = generateMnoReference()
-    const mnoCallbackUrl = `${process.env.APP_URL}/api/payments/mno-callback`
+    const mnoCallbackUrl = `${getBaseUrl()}/api/payments/mno-callback`
     const mnoProvider = (options?.mnoProvider as "mpesa" | "tigo_pesa" | "airtel_money" | "halopesa") || "mpesa"
 
     let mnoResponse
     try {
       mnoResponse = await createMnoPayment({
         provider: mnoProvider,
-        amount: Number(order.total),
+        amount: payAmount,
         phoneNumber: link.customerPhone,
         reference: mnoRef,
         callbackUrl: mnoCallbackUrl,
@@ -84,6 +97,7 @@ export async function initiatePaymentLinkPayment(
         where: { id: payment.id },
         data: {
           reference: mnoRef,
+          amount: payAmount,
           status: "Processing",
           gatewayStatus: "processing",
           gatewayResponse: { mnoProvider, mnoResponse } as never,
@@ -93,7 +107,7 @@ export async function initiatePaymentLinkPayment(
         data: {
           paymentId: payment.id,
           status: "Processing",
-          amount: order.total,
+          amount: payAmount,
           reference: mnoRef,
           nonce,
           providerPayload: mnoResponse as never,
@@ -125,8 +139,8 @@ export async function initiatePaymentLinkPayment(
     }
   }
 
-  const callbackUrl = `${process.env.APP_URL}/api/payments/callback`
-  const cancelUrl = `${process.env.APP_URL}/pay/${token}`
+  const callbackUrl = `${getBaseUrl()}/api/payments/callback`
+  const cancelUrl = `${getBaseUrl()}/pay/${token}`
 
   const customerName = (link.customerName || "").split(/\s+/)
 
@@ -135,7 +149,7 @@ export async function initiatePaymentLinkPayment(
     evmakResponse = await evmakClient.initializePayment({
       orderId: order.id,
       orderNumber: order.orderNumber || order.id,
-      amount: Number(order.total),
+      amount: payAmount,
       currency: order.currency,
       callbackUrl,
       cancelUrl,
@@ -156,6 +170,7 @@ export async function initiatePaymentLinkPayment(
       where: { id: payment.id },
       data: {
         reference: evmakResponse.reference,
+        amount: payAmount,
         status: "Processing",
         gatewayStatus: "processing",
       },
@@ -164,7 +179,7 @@ export async function initiatePaymentLinkPayment(
       data: {
         paymentId: payment.id,
         status: "Processing",
-        amount: order.total,
+        amount: payAmount,
         reference: evmakResponse.reference,
         nonce,
         providerPayload: evmakResponse as never,

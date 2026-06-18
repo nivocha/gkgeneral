@@ -3,6 +3,7 @@
 import { randomUUID } from "crypto"
 import { revalidatePath } from "next/cache"
 import { prisma, PaymentLinkStatus } from "@/lib/prisma"
+import { getBaseUrl } from "@/lib/utils"
 import { requireAuth, requireRole } from "@/lib/auth/session"
 import { logAuditEvent } from "@/lib/logger/prisma"
 
@@ -23,7 +24,7 @@ export async function generatePaymentLink(orderId: string) {
   const existing = await prisma.paymentLink.findFirst({
     where: { orderId, status: "Active" },
   })
-  if (existing) return { token: existing.token, url: `${process.env.APP_URL}/pay/${existing.token}` }
+  if (existing) return { token: existing.token, url: `${getBaseUrl()}/pay/${existing.token}` }
 
   const token = randomUUID()
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
@@ -42,7 +43,7 @@ export async function generatePaymentLink(orderId: string) {
 
   revalidatePath(`/admin/dashboard/orders/${orderId}`)
 
-  return { token, url: `${process.env.APP_URL}/pay/${token}` }
+  return { token, url: `${getBaseUrl()}/pay/${token}` }
 }
 
 export async function getPaymentLinkByToken(token: string) {

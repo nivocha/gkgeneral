@@ -9,6 +9,7 @@ export const metadata = { title: "Payment Links | Admin" }
 export default async function AdminPaymentLinksPage() {
   await requireAuth()
   const { links, total } = await getAdminPaymentLinks()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gkgenerals.com"
 
   return (
     <div className="space-y-6">
@@ -18,7 +19,7 @@ export default async function AdminPaymentLinksPage() {
           Manage shareable payment links ({total} total)
         </p>
       </div>
-      <PaymentLinksTable links={links} />
+      <PaymentLinksTable links={links} baseUrl={baseUrl} />
     </div>
   )
 }

@@ -25,6 +25,7 @@ export type InitializePaymentRequest = {
     state?: string | null
     zipCode?: string | null
     country: string
+    buildingNumber?: string | null
   }
 }
 
@@ -80,8 +81,8 @@ class EvMakClient {
   }
 
   private getCheckoutUrl(): string {
-    const { mnoApiUrl, clientId } = getPaymentEnv()
-    return `${mnoApiUrl}checkout/${clientId}`
+    const { apiUrl, clientId } = getPaymentEnv()
+    return `${apiUrl}/checkout/${clientId}`
   }
 
   private getApiBaseUrl(): string {
@@ -160,9 +161,13 @@ class EvMakClient {
       : undefined
 
     const addr = params.billingAddress
+    const evmakCurrency = "TZS"
+    const evmakAmount = params.currency === "TZS"
+      ? params.amount
+      : Math.round(params.amount * 2500)
     const payload: Record<string, string> = {
-      total: params.amount.toFixed(2),
-      currency: params.currency,
+      total: evmakAmount.toFixed(2),
+      currency: evmakCurrency,
       reference,
       country: "TZ",
       firstName: params.customerFirstName,
@@ -170,9 +175,10 @@ class EvMakClient {
       email: params.customerEmail,
       phoneNumber: phoneNumber || "",
       address1: addr?.street || "N/A",
+      buildingNumber: addr?.buildingNumber || "1",
       locality: addr?.city || "Dar es Salaam",
       administrativeArea: addr?.state || addr?.city || "Dar es Salaam",
-      postalCode: addr?.zipCode || "",
+      postalCode: addr?.zipCode || "10000",
       returnUrl: params.callbackUrl,
     }
 

@@ -34,7 +34,7 @@ export async function initiatePayment(
       total: true,
       currency: true,
       user: { select: { email: true, phone: true } },
-      payment: { select: { id: true, status: true } },
+      payment: { select: { id: true, status: true, gatewayStatus: true } },
     },
   })
 
@@ -50,8 +50,14 @@ export async function initiatePayment(
     return { success: false, message: "No payment record found for this order" }
   }
 
-  if (order.payment.status !== "Pending") {
+  if (order.payment.status === "Paid" || order.payment.status === "Refunded") {
     return { success: false, message: `Payment is already ${order.payment.status}` }
+  }
+  if (order.payment.status === "Processing") {
+    await prisma.payment.update({
+      where: { id: order.payment.id },
+      data: { status: "Pending", gatewayStatus: "pending" },
+    })
   }
 
   if (!isPaymentsConfigured()) {

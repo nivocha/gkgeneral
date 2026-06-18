@@ -29,7 +29,7 @@ const statusColors: Record<string, string> = {
   Expired: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400",
 }
 
-export function PaymentLinksTable({ links }: { links: PaymentLink[] }) {
+export function PaymentLinksTable({ links, baseUrl }: { links: PaymentLink[]; baseUrl: string }) {
   const [list, setList] = useState(links)
 
   async function handleExpire(id: string) {
@@ -67,7 +67,7 @@ export function PaymentLinksTable({ links }: { links: PaymentLink[] }) {
         </TableHeader>
         <TableBody>
           {list.map((link) => {
-            const url = `${window.location.origin}/pay/${link.token}`
+            const url = `${baseUrl}/pay/${link.token}`
             return (
               <TableRow key={link.id}>
                 <TableCell>

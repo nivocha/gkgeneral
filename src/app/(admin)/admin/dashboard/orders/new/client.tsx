@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { formatPrice, cn } from "@/lib/utils"
+import { formatPrice } from "@/lib/utils"
 import {
   Search, Plus, Minus, Trash2, Loader2, ShoppingCart,
-  ChevronLeft, Check, ExternalLink, Smartphone, Building2,
+  ChevronLeft, Check, ExternalLink, Percent,
 } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
@@ -39,12 +41,10 @@ export default function AdminCreateOrderPage() {
   const [searchResults, setSearchResults] = useState<ProductItem[]>([])
   const [searching, setSearching] = useState(false)
   const [cart, setCart] = useState<CartItem[]>([])
-  const [customerName, setCustomerName] = useState("")
-  const [customerEmail, setCustomerEmail] = useState("")
-  const [customerPhone, setCustomerPhone] = useState("")
-  const [shippingMethod, setShippingMethod] = useState("standard")
-  const [paymentMethod, setPaymentMethod] = useState("bank_transfer")
   const [notes, setNotes] = useState("")
+  const [chargeVat, setChargeVat] = useState(false)
+  const [totalOverride, setTotalOverride] = useState("")
+  const [adjustmentReason, setAdjustmentReason] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [orderResult, setOrderResult] = useState<{ orderId: string; orderNumber: string } | null>(null)
   const [generatingLink, setGeneratingLink] = useState(false)
@@ -95,26 +95,23 @@ export default function AdminCreateOrderPage() {
   }
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0)
-  const shippingRates: Record<string, number> = { standard: 0, express: 15000, same_day: 35000 }
-  const shipping = shippingRates[shippingMethod] ?? 0
-  const tax = Math.round(subtotal * 0.18 * 100) / 100
-  const total = Math.round((subtotal + tax + shipping) * 100) / 100
+  const vatAmount = chargeVat ? Math.round(subtotal * 0.18 * 100) / 100 : 0
+  const totalOverrideNum = totalOverride ? parseFloat(totalOverride) : 0
+  const displayTotal = totalOverrideNum > 0 ? totalOverrideNum : Math.round((subtotal + vatAmount) * 100) / 100
 
   async function handleCreateOrder() {
-    if (!customerName.trim()) { toast.error("Customer name is required"); return }
-    if (!customerEmail.trim()) { toast.error("Customer email is required"); return }
-    if (!customerPhone.trim()) { toast.error("Customer phone is required"); return }
     if (cart.length === 0) { toast.error("Add at least one product"); return }
+    if (totalOverrideNum > 0 && !adjustmentReason.trim()) {
+      toast.error("Please provide an adjustment reason when overriding the total"); return
+    }
 
     setSubmitting(true)
     try {
       const { createAdminOrder } = await import("@/features/orders/actions/admin-create-order")
       const result = await createAdminOrder({
-        customerName: customerName.trim(),
-        customerEmail: customerEmail.trim(),
-        customerPhone: customerPhone.trim(),
-        shippingMethod: shippingMethod as "standard" | "express" | "same_day",
-        paymentMethod: paymentMethod as "bank_transfer" | "mobile_money" | "credit_card",
+        chargeVat,
+        totalOverride: totalOverrideNum > 0 ? totalOverrideNum : undefined,
+        adjustmentReason: adjustmentReason.trim() || undefined,
         notes: notes.trim() || undefined,
         items: cart.map((i) => ({
           productId: i.productId,
@@ -166,7 +163,7 @@ export default function AdminCreateOrderPage() {
             <Button variant="outline" onClick={() => router.push(`/admin/dashboard/orders/${orderResult.orderId}`)}>
               View Order
             </Button>
-            <Button variant="ghost" onClick={() => { setOrderResult(null); setCart([]); setSearchQuery(""); setSearchResults([]) }}>
+            <Button variant="ghost" onClick={() => { setOrderResult(null); setCart([]); setSearchQuery(""); setSearchResults([]); setChargeVat(false); setTotalOverride(""); setAdjustmentReason("") }}>
               Create Another
             </Button>
           </div>
@@ -182,7 +179,7 @@ export default function AdminCreateOrderPage() {
           <ChevronLeft className="h-4 w-4 mr-1" /> Back to Orders
         </Link>
         <h1 className="text-3xl font-bold">Create Order</h1>
-        <p className="text-muted-foreground mt-1">Search products, add to cart, and create an order for a customer.</p>
+        <p className="text-muted-foreground mt-1">Search products, add to cart, and create an order.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -243,89 +240,6 @@ export default function AdminCreateOrderPage() {
               )}
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="customerName">Customer Name</Label>
-                  <Input id="customerName" placeholder="John Doe" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="customerEmail">Email</Label>
-                  <Input id="customerEmail" type="email" placeholder="john@example.com" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="customerPhone">Phone</Label>
-                <Input id="customerPhone" type="tel" placeholder="+255 700 000 000" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes (optional)</Label>
-                <Input id="notes" placeholder="Any notes about this order" value={notes} onChange={(e) => setNotes(e.target.value)} />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Shipping & Payment</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Shipping Method</Label>
-                <div className="grid sm:grid-cols-3 gap-2">
-                  {[
-                    { value: "standard", label: "Standard", desc: "Free" },
-                    { value: "express", label: "Express", desc: formatPrice(15000) },
-                    { value: "same_day", label: "Same Day", desc: formatPrice(35000) },
-                  ].map((m) => (
-                    <button
-                      key={m.value}
-                      type="button"
-                      className={cn(
-                        "p-3 border rounded-md text-sm text-left hover:border-primary",
-                        shippingMethod === m.value && "border-primary bg-primary/5"
-                      )}
-                      onClick={() => setShippingMethod(m.value)}
-                    >
-                      <p className="font-medium">{m.label}</p>
-                      <p className="text-muted-foreground text-xs">{m.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Payment Method</Label>
-                <div className="grid sm:grid-cols-3 gap-2">
-                  {[
-                    { value: "bank_transfer", label: "Bank Transfer", icon: Building2 },
-                    { value: "mobile_money", label: "Mobile Money", icon: Smartphone },
-                    { value: "credit_card", label: "Credit Card", icon: ExternalLink },
-                  ].map((m) => {
-                    const Icon = m.icon
-                    return (
-                      <button
-                        key={m.value}
-                        type="button"
-                        className={cn(
-                          "p-3 border rounded-md text-sm text-left hover:border-primary flex items-center gap-2",
-                          paymentMethod === m.value && "border-primary bg-primary/5"
-                        )}
-                        onClick={() => setPaymentMethod(m.value)}
-                      >
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                        <span>{m.label}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="space-y-6">
@@ -340,7 +254,7 @@ export default function AdminCreateOrderPage() {
               {cart.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">Cart is empty. Search and add products.</p>
               ) : (
-                <ScrollArea className="max-h-96">
+                <ScrollArea className="max-h-64">
                   <div className="space-y-3">
                     {cart.map((item) => (
                       <div key={item.productId} className="flex items-center gap-2">
@@ -372,21 +286,60 @@ export default function AdminCreateOrderPage() {
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax (18%)</span>
-                  <span>{formatPrice(tax)}</span>
+                <div className="flex items-center gap-2 py-1">
+                  <Switch
+                    id="chargeVat"
+                    checked={chargeVat}
+                    onCheckedChange={(v) => setChargeVat(v)}
+                    disabled={totalOverrideNum > 0}
+                  />
+                  <Label htmlFor="chargeVat" className="text-sm cursor-pointer">Purchasing as Business (VAT 18%)</Label>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+                {chargeVat && (
+                  <div className="flex justify-between pl-6">
+                    <span className="text-muted-foreground">VAT (18%)</span>
+                    <span>{formatPrice(vatAmount)}</span>
+                  </div>
+                )}
+                <Separator />
+                <div className="space-y-2 pt-1">
+                  <Label className="text-xs text-muted-foreground">Total Override (optional)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Leave blank to auto-calculate"
+                    value={totalOverride}
+                    onChange={(e) => setTotalOverride(e.target.value)}
+                  />
                 </div>
+                {totalOverrideNum > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Adjustment Reason</Label>
+                    <Input
+                      placeholder="e.g. Discount, surcharge..."
+                      value={adjustmentReason}
+                      onChange={(e) => setAdjustmentReason(e.target.value)}
+                    />
+                  </div>
+                )}
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>{total > 0 ? formatPrice(total) : "—"}</span>
+                  <span>{displayTotal > 0 ? formatPrice(displayTotal) : "—"}</span>
                 </div>
               </div>
-              <Button className="w-full mt-6" size="lg" onClick={handleCreateOrder} disabled={submitting || cart.length === 0}>
+              <div className="space-y-2 mt-4">
+                <Label htmlFor="notes">Notes (optional)</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Order notes..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={2}
+                />
+              </div>
+              <Button className="w-full mt-4" size="lg" onClick={handleCreateOrder} disabled={submitting || cart.length === 0}>
                 {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {submitting ? "Creating..." : "Create Order"}
               </Button>

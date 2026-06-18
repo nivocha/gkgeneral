@@ -42,26 +42,26 @@ import { ImageUpload } from "@/features/upload/components/image-upload"
 const statusOptions = ["Draft", "Active", "Archived", "OutOfStock"] as const
 
 const productFormSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().optional(),
   shortDescription: z.string().optional(),
   description: z.string().optional(),
   categoryId: z.string().optional(),
   brandId: z.string().optional(),
   sku: z.string().optional(),
   barcode: z.string().optional(),
-  unit: z.string(),
+  unit: z.string().optional(),
   weight: z.string().optional(),
   dimensions: z.string().optional(),
   material: z.string().optional(),
   warranty: z.string().optional(),
-  minOrderQuantity: z.number().min(1),
+  minOrderQuantity: z.number().min(0).optional(),
   maxOrderQuantity: z.number().optional(),
-  status: z.enum(statusOptions),
-  isFeatured: z.boolean(),
-  price: z.number().positive().optional().or(z.literal("")),
+  status: z.enum(statusOptions).optional(),
+  isFeatured: z.boolean().optional(),
+  price: z.number().nonnegative().optional().or(z.literal("")),
   comparePrice: z.number().optional().or(z.literal("")),
   costPrice: z.number().optional().or(z.literal("")),
-  currency: z.string(),
+  currency: z.string().optional(),
   tags: z.string().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
@@ -308,9 +308,9 @@ export function ProductForm({ initialData, categories, brands }: Props) {
 
       const payload = {
         ...values,
-        price: values.price || undefined,
-        comparePrice: values.comparePrice || undefined,
-        costPrice: values.costPrice || undefined,
+        price: values.price ?? undefined,
+        comparePrice: values.comparePrice ?? undefined,
+        costPrice: values.costPrice ?? undefined,
         tags: values.tags
           ? values.tags.split(",").map((t) => t.trim()).filter(Boolean)
           : [],
@@ -475,16 +475,16 @@ export function ProductForm({ initialData, categories, brands }: Props) {
           <div className="grid sm:grid-cols-3 gap-4 mb-4">
             <div>
               <Label htmlFor="price">Selling Price</Label>
-              <Input id="price" type="number" step="0.01" {...register("price")} placeholder="0.00" />
+              <Input id="price" type="number" step="0.01" {...register("price", { valueAsNumber: true })} placeholder="0.00" />
               {errors.price && <p className="text-sm text-destructive mt-1">{errors.price.message}</p>}
             </div>
             <div>
               <Label htmlFor="comparePrice">Compare at Price</Label>
-              <Input id="comparePrice" type="number" step="0.01" {...register("comparePrice")} placeholder="0.00" />
+              <Input id="comparePrice" type="number" step="0.01" {...register("comparePrice", { valueAsNumber: true })} placeholder="0.00" />
             </div>
             <div>
               <Label htmlFor="costPrice">Cost Price</Label>
-              <Input id="costPrice" type="number" step="0.01" {...register("costPrice")} placeholder="0.00" />
+              <Input id="costPrice" type="number" step="0.01" {...register("costPrice", { valueAsNumber: true })} placeholder="0.00" />
             </div>
           </div>
 
@@ -507,11 +507,11 @@ export function ProductForm({ initialData, categories, brands }: Props) {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="minOrderQuantity">Min Order Quantity</Label>
-              <Input id="minOrderQuantity" type="number" {...register("minOrderQuantity")} />
+              <Input id="minOrderQuantity" type="number" {...register("minOrderQuantity", { valueAsNumber: true })} />
             </div>
             <div>
               <Label htmlFor="maxOrderQuantity">Max Order Quantity</Label>
-              <Input id="maxOrderQuantity" type="number" {...register("maxOrderQuantity")} placeholder="Unlimited" />
+              <Input id="maxOrderQuantity" type="number" {...register("maxOrderQuantity", { valueAsNumber: true })} placeholder="Unlimited" />
             </div>
           </div>
         </CardContent>

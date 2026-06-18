@@ -20,12 +20,12 @@ const productSchema = z.object({
   dimensions: z.string().optional(),
   material: z.string().optional(),
   warranty: z.string().optional(),
-  minOrderQuantity: z.coerce.number().min(1).default(1),
+  minOrderQuantity: z.coerce.number().min(0).default(1),
   maxOrderQuantity: z.coerce.number().optional(),
   status: z.nativeEnum(ProductStatus).default("Draft"),
   isFeatured: z.boolean().default(false),
   isPublished: z.boolean().default(false),
-  price: z.coerce.number().positive("Price must be positive").optional(),
+  price: z.coerce.number().nonnegative("Price must be zero or positive").optional(),
   comparePrice: z.coerce.number().optional(),
   costPrice: z.coerce.number().optional(),
   currency: z.string().default("USD"),
@@ -37,7 +37,7 @@ const productSchema = z.object({
 const variantSchema = z.object({
   name: z.string().min(1, "Variant name is required"),
   sku: z.string().min(1, "Variant SKU is required"),
-  price: z.coerce.number().positive("Price must be positive"),
+  price: z.coerce.number().nonnegative("Price must be zero or positive"),
   costPrice: z.coerce.number().optional(),
   attributes: z.string().optional(),
   isActive: z.boolean().default(true),
@@ -234,8 +234,9 @@ export async function createProduct(
   const user = await requireRole("super_admin", "admin", "inventory_manager")
 
   const validated = productSchema.parse(data)
-  const slug = slugify(validated.name)
-  const sku = validated.sku || generateSKU(validated.categoryId || "GEN", validated.name, crypto.randomUUID())
+  const productName = validated.name || "Untitled Product"
+  const slug = slugify(productName)
+  const sku = validated.sku || generateSKU(validated.categoryId || "GEN", productName, crypto.randomUUID())
 
   const product = await prisma.product.create({
     data: {
@@ -307,25 +308,27 @@ export async function updateProduct(
     return { success: false, message: "Product not found" }
   }
 
-  const validated = productSchema.parse(data)
-  const slug = slugify(validated.name)
+  const validated = productSchema.partial().parse(data)
+  const productName = validated.name || existing.name || "Untitled Product"
+  const slug = slugify(productName)
+  const updateData: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(validated)) {
+    if (value !== undefined) updateData[key] = value
+  }
+  updateData.slug = slug
+  updateData.sku = validated.sku || existing.sku
+  updateData.tags = validated.tags ?? existing.tags
+  updateData.price = validated.price ?? undefined
+  updateData.comparePrice = validated.comparePrice ?? undefined
+  updateData.costPrice = validated.costPrice ?? undefined
 
   const product = await prisma.$transaction(async (tx) => {
     const updated = await tx.product.update({
       where: { id },
-      data: {
-        ...validated,
-        slug,
-        sku: validated.sku || existing.sku,
-        price: validated.price ?? undefined,
-        comparePrice: validated.comparePrice ?? undefined,
-        costPrice: validated.costPrice ?? undefined,
-        tags: validated.tags ?? [],
-        isPublished: validated.isPublished,
-      },
+      data: updateData,
     })
 
-    if (validated.status !== existing.status) {
+    if (validated.status !== undefined && validated.status !== existing.status) {
       await tx.productStatusHistory.create({
         data: {
           productId: id,
@@ -411,7 +414,7 @@ export async function updateProduct(
     return updated
   })
 
-  await auditLog(user.id, "product.updated", "product", id, `Updated product: ${validated.name}`)
+  await auditLog(user.id, "product.updated", "product", id, `Updated product: ${productName}`)
 
   revalidatePath("/admin/dashboard/products")
   revalidatePath(`/admin/dashboard/products/${id}/edit`)
@@ -509,7 +512,7 @@ export async function createVariant(
     },
   })
 
-  await auditLog(user.id, "product.variant_created", "product_variant", variant.id, `Created variant: ${validated.name}`)
+  await auditLog(user.id, "product.variant_created", "product_variant", variant.id, `Created variant: ${validated.name || "Untitled"}`)
   revalidatePath(`/admin/dashboard/products/${productId}/edit`)
   revalidatePath("/")
 
@@ -529,7 +532,7 @@ export async function updateVariant(id: string, data: z.infer<typeof variantSche
     },
   })
 
-  await auditLog(user.id, "product.variant_updated", "product_variant", id, `Updated variant: ${validated.name}`)
+  await auditLog(user.id, "product.variant_updated", "product_variant", id, `Updated variant: ${validated.name || "Untitled"}`)
   revalidatePath("/admin/dashboard/products")
   revalidatePath("/")
 
