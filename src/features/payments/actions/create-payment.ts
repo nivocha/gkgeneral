@@ -80,14 +80,14 @@ export async function initiatePayment(
     }
   }
 
-  const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payments/callback`
-  const cancelUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/account/orders/${order.id}`
-  const returnUrl = callbackUrl
-
   const orderFull = await prisma.order.findUnique({
     where: { id: order.id },
     select: { orderNumber: true },
   })
+
+  const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payments/callback`
+  const cancelUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/account/orders/${order.id}`
+  const returnUrl = `${callbackUrl}?reference=${orderFull?.orderNumber || order.id}`
 
   const nameParts = (user.name || "").split(/\s+/)
 

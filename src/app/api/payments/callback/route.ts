@@ -5,12 +5,14 @@ import { assertValidTransition } from "@/features/payments/lib/payment-state-mac
 import { mapEvMakStatusToPaymentStatus } from "@/features/payments/lib/payment-status"
 import { PAYMENT_AUDIT_ACTIONS } from "@/features/payments/lib/audit-actions"
 import { commitInventoryForOrder, releaseInventoryForOrder } from "@/features/payments/lib/inventory"
+import { getBaseUrl } from "@/lib/utils"
 import type { PaymentStatus } from "@/lib/prisma"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const reference = searchParams.get("reference") || searchParams.get("transaction_reference")
-  const evmakStatus = searchParams.get("status") || ""
+  const token = searchParams.get("token")
+  const baseUrl = getBaseUrl()
 
   let payment = null
   if (reference) {
@@ -18,6 +20,16 @@ export async function GET(request: Request) {
       where: { reference },
       include: { order: { select: { id: true, orderNumber: true } } },
     })
+  }
+
+  if (!payment && token) {
+    const link = await prisma.paymentLink.findUnique({
+      where: { token },
+      include: { order: { include: { payment: true } } },
+    })
+    if (link?.order?.payment) {
+      payment = { ...link.order.payment, order: { id: link.order.id, orderNumber: link.order.orderNumber } } as any
+    }
   }
 
   if (!payment) {
@@ -28,6 +40,7 @@ export async function GET(request: Request) {
     })
   }
 
+  let reconciled = false
   if (payment && (payment.status === "Processing" || payment.status === "Pending")) {
     try {
       const { evmakClient } = await import("@/features/payments/lib/evmak-client")
@@ -36,36 +49,37 @@ export async function GET(request: Request) {
         const txStatus = result.data.status
         const newStatus = mapEvMakStatusToPaymentStatus(txStatus)
         if (newStatus && newStatus !== payment.status) {
-          try {
-            assertValidTransition(payment.status as PaymentStatus, newStatus)
-            await prisma.payment.update({
-              where: { id: payment.id },
-              data: {
-                status: newStatus,
-                gatewayStatus: txStatus,
-                ...(result.data.payment_id ? { transactionReference: result.data.payment_id } : {}),
-                ...(result.data.approval_code ? { approvalCode: result.data.approval_code } : {}),
-                ...(newStatus === "Paid" ? { paidAt: result.data.authorized_at ? new Date(result.data.authorized_at) : new Date() } : {}),
-              },
+          assertValidTransition(payment.status as PaymentStatus, newStatus)
+          await prisma.payment.update({
+            where: { id: payment.id },
+            data: {
+              status: newStatus,
+              gatewayStatus: txStatus,
+              ...(result.data.payment_id ? { transactionReference: result.data.payment_id } : {}),
+              ...(result.data.approval_code ? { approvalCode: result.data.approval_code } : {}),
+              ...(newStatus === "Paid" ? { paidAt: result.data.authorized_at ? new Date(result.data.authorized_at) : new Date() } : {}),
+            },
+          })
+          if (newStatus === "Paid") {
+            await prisma.order.update({
+              where: { id: payment.orderId },
+              data: { status: "Paid" },
             })
-            if (newStatus === "Paid") {
-              await prisma.order.update({
-                where: { id: payment.orderId },
-                data: { status: "Paid" },
-              })
-            }
-            payment.status = newStatus as any
-          } catch {}
+          }
+          payment.status = newStatus as any
+          reconciled = true
         }
       }
-    } catch {}
+    } catch {
+      console.error("[CALLBACK_GET] reconciliation failed for", payment.reference)
+    }
   }
 
-  let redirectUrl = `${new URL(request.url).origin}/`
+  let redirectUrl = `${baseUrl}/`
   if (payment) {
     const link = await prisma.paymentLink.findFirst({ where: { orderId: payment.orderId } })
-    if (link) redirectUrl = `${new URL(request.url).origin}/pay/${link.token}/success`
-    else redirectUrl = `${new URL(request.url).origin}/account/orders`
+    if (link) redirectUrl = `${baseUrl}/pay/${link.token}/success`
+    else redirectUrl = `${baseUrl}/account/orders`
   }
 
   return new Response(
