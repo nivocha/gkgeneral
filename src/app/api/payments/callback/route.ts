@@ -81,6 +81,14 @@ export async function GET(request: Request) {
                 where: { id: payment.orderId },
                 data: { status: "Paid" },
               })
+              await tx.orderStatusHistory.create({
+                data: {
+                  orderId: payment.orderId,
+                  status: "Paid",
+                  changedBy: null,
+                  note: "Payment confirmed via EvMak reconciliation",
+                },
+              })
             }
           })
           payment.status = newStatus as any
