@@ -14,6 +14,7 @@ export type InitializePaymentRequest = {
   amount: number
   currency: string
   callbackUrl: string
+  returnUrl: string
   cancelUrl: string
   customerFirstName: string
   customerLastName: string
@@ -179,7 +180,7 @@ class EvMakClient {
       locality: addr?.city || "Dar es Salaam",
       administrativeArea: addr?.state || addr?.city || "Dar es Salaam",
       postalCode: addr?.zipCode || "10000",
-      returnUrl: params.callbackUrl,
+      returnUrl: params.returnUrl,
     }
 
     const encodedPayload = base64Encode(payload)
