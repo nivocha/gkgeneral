@@ -50,22 +50,39 @@ export async function GET(request: Request) {
         const newStatus = mapEvMakStatusToPaymentStatus(txStatus)
         if (newStatus && newStatus !== payment.status) {
           assertValidTransition(payment.status as PaymentStatus, newStatus)
-          await prisma.payment.update({
-            where: { id: payment.id },
-            data: {
-              status: newStatus,
-              gatewayStatus: txStatus,
-              ...(result.data.payment_id ? { transactionReference: result.data.payment_id } : {}),
-              ...(result.data.approval_code ? { approvalCode: result.data.approval_code } : {}),
-              ...(newStatus === "Paid" ? { paidAt: result.data.authorized_at ? new Date(result.data.authorized_at) : new Date() } : {}),
-            },
-          })
-          if (newStatus === "Paid") {
-            await prisma.order.update({
-              where: { id: payment.orderId },
-              data: { status: "Paid" },
+          const txData = result.data!
+          await prisma.$transaction(async (tx) => {
+            await tx.payment.update({
+              where: { id: payment.id },
+              data: {
+                status: newStatus,
+                gatewayStatus: txStatus,
+                ...(txData.payment_id ? { transactionReference: txData.payment_id } : {}),
+                ...(txData.approval_code ? { approvalCode: txData.approval_code } : {}),
+                ...(newStatus === "Paid" ? { paidAt: txData.authorized_at ? new Date(txData.authorized_at) : new Date() } : {}),
+              },
             })
-          }
+            await tx.paymentTransaction.create({
+              data: {
+                paymentId: payment.id,
+                status: newStatus,
+                amount: payment.amount,
+                reference: payment.reference || payment.id,
+                externalReference: txData.payment_id,
+                providerPayload: result as never,
+                metadata: JSON.stringify({
+                  source: "callback_get",
+                  evmakStatus: txStatus,
+                }),
+              },
+            })
+            if (newStatus === "Paid") {
+              await tx.order.update({
+                where: { id: payment.orderId },
+                data: { status: "Paid" },
+              })
+            }
+          })
           payment.status = newStatus as any
           reconciled = true
         }
