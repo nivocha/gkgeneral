@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Package, AlertTriangle, XCircle, Building2, DollarSign } from "lucide-react"
+import { formatPrice } from "@/lib/currency"
 
 type Analytics = {
   totalStockValue: number
@@ -13,7 +14,7 @@ export function InventoryAnalyticsCards({ data }: { data: Analytics }) {
   const cards = [
     {
       title: "Total Stock Value",
-      value: `TSh ${(data.totalStockValue).toLocaleString()}`,
+      value: formatPrice(Number(data.totalStockValue)),
       icon: DollarSign,
       color: "text-green-600",
       bg: "bg-green-100 dark:bg-green-900/30",

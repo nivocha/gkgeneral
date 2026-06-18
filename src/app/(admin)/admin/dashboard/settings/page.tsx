@@ -33,7 +33,7 @@ export default async function AdminSettingsPage() {
         <CardContent className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Currency</span>
-            <span className="font-medium">TZS (Tanzanian Shilling)</span>
+            <span className="font-medium">USD (US Dollar)</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Tax Rate</span>

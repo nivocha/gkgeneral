@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3,
   Settings, FileText, Warehouse, MapPin, CreditCard,
   Shield, Activity, Bell, ChevronLeft, Menu, Link2,
-  LogOut, User, ChartPie, Layout, Tag, Mail, UserPlus, Store
+  LogOut, User, ChartPie, Layout, Tag, Mail, UserPlus, Store, Plus
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSession } from "@/components/providers/session-provider"
@@ -21,6 +21,7 @@ const sidebarLinks = [
   { href: "/admin/dashboard/categories", label: "Categories", icon: MapPin },
   { href: "/admin/dashboard/inventory", label: "Inventory", icon: Warehouse },
   { href: "/admin/dashboard/warehouses", label: "Warehouses", icon: MapPin },
+  { href: "/admin/dashboard/orders/new", label: "New Order", icon: Plus },
   { href: "/admin/dashboard/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/dashboard/quotes", label: "Quotes", icon: FileText },
   { href: "/admin/dashboard/customers", label: "Customers", icon: Users },

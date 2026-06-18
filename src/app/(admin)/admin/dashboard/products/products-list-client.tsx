@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { formatPrice } from "@/lib/currency"
 import { Badge } from "@/components/ui/badge"
 import {
   Select,
@@ -362,7 +363,7 @@ export function ProductsListClient({ products, total, page, totalPages, categori
                   <TableCell className="text-right">
                     <span className="text-sm font-medium">
                       {product.price != null
-                        ? `${product.currency || "TZS"} ${Number(product.price).toLocaleString()}`
+                        ? formatPrice(Number(product.price), product.currency)
                         : "—"}
                     </span>
                   </TableCell>

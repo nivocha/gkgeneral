@@ -176,11 +176,11 @@ export function ProductDetailContent({ product }: Props) {
           {/* Price */}
           <div className="flex items-baseline gap-3">
             <span className="text-3xl font-bold">
-              {formatPrice(displayPrice, product.currency || "TZS")}
+              {formatPrice(displayPrice, product.currency)}
             </span>
             {displayComparePrice && displayComparePrice > displayPrice && (
               <span className="text-xl text-muted-foreground line-through">
-                {formatPrice(displayComparePrice, product.currency || "TZS")}
+                {formatPrice(displayComparePrice, product.currency)}
               </span>
             )}
           </div>

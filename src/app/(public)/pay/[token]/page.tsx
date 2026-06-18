@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getPaymentLinkByToken } from "@/features/payments/actions/payment-links"
 import { PayPageClient } from "./client"
+import { formatPrice } from "@/lib/currency"
 
 type Props = { params: Promise<{ token: string }> }
 
@@ -12,13 +13,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `Pay - ${link.order.orderNumber} | GK General Supply`,
-    description: `Complete your payment of ${formatTotal(link.order.total)} for order ${link.order.orderNumber}`,
+    description: `Complete your payment of ${formatTotal(link.order.total, link.order.currency)} for order ${link.order.orderNumber}`,
   }
 }
 
-function formatTotal(value: { toString: () => string }) {
-  const num = Number(value)
-  return `TZS ${num.toLocaleString("en-US", { minimumFractionDigits: 0 })}`
+function formatTotal(value: { toString: () => string }, currency?: string | null) {
+  return formatPrice(Number(value), currency)
 }
 
 export default async function PayPage({ params }: Props) {
@@ -69,8 +69,8 @@ export default async function PayPage({ params }: Props) {
                   <span className="text-muted-foreground truncate">
                     {item.quantity}x {item.name}
                   </span>
-                  <span className="shrink-0">
-                    TZS {Number(item.total).toLocaleString("en-US")}
+                    <span className="shrink-0">
+                    {formatPrice(Number(item.total), order.currency)}
                   </span>
                 </div>
               ))}
@@ -78,20 +78,20 @@ export default async function PayPage({ params }: Props) {
             <div className="border-t pt-2 space-y-1 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>TZS {Number(order.subtotal).toLocaleString("en-US")}</span>
+                <span>{formatPrice(Number(order.subtotal), order.currency)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Shipping</span>
-                <span>TZS {Number(order.shipping).toLocaleString("en-US")}</span>
+                <span>{formatPrice(Number(order.shipping), order.currency)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Tax</span>
-                <span>TZS {Number(order.tax).toLocaleString("en-US")}</span>
+                <span>{formatPrice(Number(order.tax), order.currency)}</span>
               </div>
             </div>
             <div className="border-t pt-2 flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span>TZS {total.toLocaleString("en-US")}</span>
+              <span>{formatPrice(total, order.currency)}</span>
             </div>
           </div>
         </div>

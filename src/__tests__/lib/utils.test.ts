@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest"
 import { formatPrice, cn, getBaseUrl } from "@/lib/utils"
 
 describe("formatPrice", () => {
-  it("formats TZS correctly", () => {
+  it("formats price correctly", () => {
     expect(formatPrice(15000)).toContain("15,000")
   })
   it("handles zero", () => {

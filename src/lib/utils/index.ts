@@ -6,14 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price: number, currency = "TZS"): string {
-  return new Intl.NumberFormat("en-TZ", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(price)
-}
+export { formatPrice, DEFAULT_CURRENCY, getCurrencySymbol, getCurrencyConfig } from "@/lib/currency"
 
 export function formatDate(date: Date | string | null): string {
   if (!date) return "-"

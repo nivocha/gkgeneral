@@ -6,10 +6,14 @@ import { evmakClient } from "@/features/payments/lib/evmak-client"
 import { isPaymentsConfigured } from "@/lib/env"
 import { PAYMENT_AUDIT_ACTIONS } from "@/features/payments/lib/audit-actions"
 import { generateNonce } from "@/features/payments/lib/signature"
+import { createMnoPayment, generateMnoReference } from "@/features/payments/lib/mno"
 import { revalidatePath } from "next/cache"
 import { getSafeErrorMessage } from "@/features/payments/lib/errors"
 
-export async function initiatePaymentLinkPayment(token: string) {
+export async function initiatePaymentLinkPayment(
+  token: string,
+  options?: { method?: string; mnoProvider?: string }
+) {
   const link = await prisma.paymentLink.findUnique({
     where: { token },
     include: {
@@ -44,6 +48,81 @@ export async function initiatePaymentLinkPayment(token: string) {
       description: `Payment via link pending for order ${order.id} — gateway not configured`,
     })
     return { success: false, message: "Online payment is not configured" }
+  }
+
+  const method = options?.method || "credit_card"
+
+  if (method === "mobile_money") {
+    if (!link.customerPhone) {
+      return { success: false, message: "Phone number is required for mobile money" }
+    }
+    const mnoRef = generateMnoReference()
+    const mnoCallbackUrl = `${process.env.APP_URL}/api/payments/mno-callback`
+    const mnoProvider = (options?.mnoProvider as "mpesa" | "tigo_pesa" | "airtel_money" | "halopesa") || "mpesa"
+
+    let mnoResponse
+    try {
+      mnoResponse = await createMnoPayment({
+        provider: mnoProvider,
+        amount: Number(order.total),
+        phoneNumber: link.customerPhone,
+        reference: mnoRef,
+        callbackUrl: mnoCallbackUrl,
+      })
+    } catch (error) {
+      return { success: false, message: getSafeErrorMessage(error) }
+    }
+
+    if (!mnoResponse.success) {
+      return { success: false, message: mnoResponse.message || "Mobile money payment failed" }
+    }
+
+    const nonce = generateNonce()
+
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          reference: mnoRef,
+          status: "Processing",
+          gatewayStatus: "processing",
+          gatewayResponse: { mnoProvider, mnoResponse } as never,
+        },
+      })
+      await tx.paymentTransaction.create({
+        data: {
+          paymentId: payment.id,
+          status: "Processing",
+          amount: order.total,
+          reference: mnoRef,
+          nonce,
+          providerPayload: mnoResponse as never,
+          metadata: JSON.stringify({
+            initiatedBy: "payment_link",
+            linkToken: token,
+            mnoProvider,
+            mnoTransactionId: mnoResponse.transaction_id,
+          }),
+        },
+      })
+    })
+
+    await logAuditEvent({
+      userId: link.id,
+      action: PAYMENT_AUDIT_ACTIONS.PAYMENT_PENDING,
+      entity: "PaymentLink",
+      entityId: link.id,
+      description: `MNO payment initiated via link for order ${order.orderNumber} (${mnoProvider})`,
+      metadata: { reference: mnoRef, token, mnoProvider },
+    })
+
+    revalidatePath(`/pay/${token}`)
+
+    return {
+      success: true,
+      message: `Check your phone for ${mnoProvider} payment prompt`,
+      data: { reference: mnoRef },
+    }
   }
 
   const callbackUrl = `${process.env.APP_URL}/api/payments/callback`

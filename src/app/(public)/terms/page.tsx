@@ -17,7 +17,7 @@ export default function TermsPage() {
       </p>
       <h2>Orders & Pricing</h2>
       <p>
-        All prices are listed in Tanzanian Shillings (TZS) unless otherwise stated.
+        All prices are listed in US Dollars (USD) unless otherwise stated.
         We reserve the right to modify prices at any time. Orders are subject to availability and acceptance.
       </p>
       <h2>Shipping & Delivery</h2>

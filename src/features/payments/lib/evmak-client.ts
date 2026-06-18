@@ -79,8 +79,9 @@ class EvMakClient {
     this.maxRetries = 2
   }
 
-  private getCheckoutBaseUrl(): string {
-    return getPaymentEnv().apiUrl
+  private getCheckoutUrl(): string {
+    const { mnoApiUrl, clientId } = getPaymentEnv()
+    return `${mnoApiUrl}checkout/${clientId}`
   }
 
   private getApiBaseUrl(): string {
@@ -178,7 +179,7 @@ class EvMakClient {
     const encodedPayload = base64Encode(payload)
     const signature = createCheckoutSignature(encodedPayload)
 
-    const checkoutUrl = `${this.getCheckoutBaseUrl()}/?data=${encodeURIComponent(encodedPayload)}&sig=${signature}`
+    const checkoutUrl = `${this.getCheckoutUrl()}?data=${encodeURIComponent(encodedPayload)}&sig=${signature}`
 
     return {
       success: true,

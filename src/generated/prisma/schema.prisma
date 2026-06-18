@@ -234,7 +234,7 @@ model Product {
   price            Decimal?                 @db.Decimal(12, 2)
   comparePrice     Decimal?                 @db.Decimal(12, 2)
   costPrice        Decimal?                 @db.Decimal(12, 2)
-  currency         String                   @default("TZS")
+  currency         String                   @default("USD")
   tags             String[]
   seoTitle         String?
   seoDescription   String?
@@ -362,7 +362,7 @@ model Order {
   tax         Decimal     @db.Decimal(12, 2)
   shipping    Decimal     @db.Decimal(12, 2)
   total       Decimal     @db.Decimal(12, 2)
-  currency    String      @default("TZS")
+  currency    String      @default("USD")
   notes       String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -431,7 +431,7 @@ model Payment {
   method               String
   status               PaymentStatus @default(Pending)
   amount               Decimal       @db.Decimal(12, 2)
-  currency             String        @default("TZS")
+  currency             String        @default("USD")
   reference            String?
   transactionReference String?
   paymentId            String?

@@ -1,14 +1,5 @@
 import { describe, it, expect } from "vitest"
-
-// Core utility tests for pricing logic
-function formatPrice(price: number, currency = "TZS"): string {
-  return new Intl.NumberFormat("en-TZ", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price)
-}
+import { formatPrice } from "@/lib/currency"
 
 function calculateOrderTotal(items: { price: number; quantity: number }[], taxRate = 0, shipping = 0): {
   subtotal: number
@@ -57,7 +48,7 @@ function validatePaymentStatusTransition(from: string, to: string): boolean {
 }
 
 describe("formatPrice", () => {
-  it("formats TZS price correctly", () => {
+  it("formats price correctly", () => {
     expect(formatPrice(150000)).toContain("150,000")
   })
 

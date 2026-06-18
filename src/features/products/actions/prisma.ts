@@ -28,7 +28,7 @@ const productSchema = z.object({
   price: z.coerce.number().positive("Price must be positive").optional(),
   comparePrice: z.coerce.number().optional(),
   costPrice: z.coerce.number().optional(),
-  currency: z.string().default("TZS"),
+  currency: z.string().default("USD"),
   tags: z.array(z.string()).optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),

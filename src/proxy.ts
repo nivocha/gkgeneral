@@ -8,12 +8,18 @@ const publicPaths = [
   "/sitemap.xml", "/robots.txt",
 ]
 
-const authPaths = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email"]
+function getCookie(cookie: string, name: string): string | null {
+  for (const part of cookie.split(";")) {
+    const eq = part.indexOf("=")
+    if (eq === -1) continue
+    if (part.slice(0, eq).trim() === name) return part.slice(eq + 1).trim()
+  }
+  return null
+}
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Rate limiting — Better Auth handles auth rate limiting natively (10/min)
   const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown"
   if (pathname.startsWith("/search") || pathname.startsWith("/api/search")) {
     if (!checkRateLimit(`search:${ip}`, 10).allowed) {
@@ -23,7 +29,6 @@ export async function proxy(request: NextRequest) {
 
   const response = NextResponse.next()
 
-  // Security Headers (production only)
   if (process.env.NODE_ENV === "production") {
     response.headers.set(
       "Content-Security-Policy",
@@ -38,7 +43,6 @@ export async function proxy(request: NextRequest) {
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
-        
       ].join("; ")
     )
     response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
@@ -49,7 +53,6 @@ export async function proxy(request: NextRequest) {
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
   }
 
-  // HTTPS redirect in production
   if (process.env.NODE_ENV === "production" && process.env.FORCE_HTTPS === "true") {
     if (request.headers.get("x-forwarded-proto") !== "https") {
       const url = new URL(request.url)
@@ -59,38 +62,24 @@ export async function proxy(request: NextRequest) {
   }
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"))
+  const authPaths = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email"]
   const isAuthRoute = authPaths.some((p) => pathname.startsWith(p))
   const isAdminRoute = pathname.startsWith("/admin")
-  const isCustomerRoute = pathname.startsWith("/account") || pathname.startsWith("/checkout")
 
-  // Allow public routes immediately
-  if (isPublic) {
-    return response
-  }
+  if (isPublic) return response
+  if (isAuthRoute) return response
 
-  // Allow auth routes (login, register, etc.) — no session check needed
-  if (isAuthRoute) {
-    return response
-  }
+  // Use raw Cookie header to avoid Next.js __Secure- prefix filtering over HTTP
+  const rawCookie = request.headers.get("cookie") || ""
+  const sessionToken = getCookie(rawCookie, "__Secure-better-auth.session_token") || getCookie(rawCookie, "better-auth.session_token")
 
-  // Protected routes: require session
-  const sessionCookie = request.cookies.get("better-auth.session_token")
-
-  if (!sessionCookie?.value) {
-    if (isAdminRoute || isCustomerRoute) {
+  if (!sessionToken) {
+    if (isAdminRoute) {
       const loginUrl = new URL("/login", request.url)
-      const redirectPath = pathname + (request.nextUrl.search || "")
-      loginUrl.searchParams.set("redirect", redirectPath)
+      loginUrl.searchParams.set("redirect", pathname + (request.nextUrl.search || ""))
       return NextResponse.redirect(loginUrl)
     }
     return response
-  }
-
-  // Authenticated users trying to access auth routes — redirect away
-  if (isAuthRoute) {
-    // Default customer redirect
-    const destination = new URL("/account", request.url)
-    return NextResponse.redirect(destination)
   }
 
   return response

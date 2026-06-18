@@ -11,7 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ChevronRight, Search } from "lucide-react"
+import { ChevronRight, Search, Plus } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button-variants"
 
 export const dynamic = "force-dynamic"
 
@@ -44,9 +45,14 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Orders</h1>
-        <p className="text-muted-foreground mt-1">{result.total} total orders</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Orders</h1>
+          <p className="text-muted-foreground mt-1">{result.total} total orders</p>
+        </div>
+        <Link href="/admin/dashboard/orders/new" className={buttonVariants()}>
+          <Plus className="h-4 w-4 mr-2" />New Order
+        </Link>
       </div>
 
       <form className="flex flex-col sm:flex-row gap-3">

@@ -93,7 +93,7 @@ export async function createOrder(data: CreateOrderInput) {
         tax,
         shipping,
         total,
-        currency: "TZS",
+        currency: "USD",
         notes: validated.notes ?? null,
         items: {
           create: orderItems.map((i) => ({
@@ -117,7 +117,7 @@ export async function createOrder(data: CreateOrderInput) {
             method: validated.paymentMethod,
             status: "Pending",
             amount: total,
-            currency: "TZS",
+            currency: "USD",
           },
         },
       },

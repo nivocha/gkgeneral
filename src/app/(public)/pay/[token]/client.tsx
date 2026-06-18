@@ -6,22 +6,31 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, CreditCard, Smartphone, Building2 } from "lucide-react"
+import { Loader2, CreditCard, Smartphone, Building2, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { formatPrice } from "@/lib/currency"
 import { updatePaymentLinkCustomer } from "@/features/payments/actions/payment-links"
 import { initiatePaymentLinkPayment } from "@/features/payments/actions/initiate-payment-link"
 import { toast } from "sonner"
 
 const PAYMENT_METHODS = [
   { id: "credit_card", label: "Credit/Debit Card", icon: CreditCard },
-  { id: "mobile_money", label: "Mobile Money", icon: Smartphone },
+  { id: "mobile_money", label: "Mobile Money (M-Pesa, Tigo, Airtel)", icon: Smartphone },
   { id: "bank_transfer", label: "Bank Transfer", icon: Building2 },
+] as const
+
+const MNO_PROVIDERS = [
+  { id: "mpesa", label: "M-Pesa" },
+  { id: "tigo_pesa", label: "Tigo Pesa" },
+  { id: "airtel_money", label: "Airtel Money" },
+  { id: "halopesa", label: "HaloPesa" },
 ] as const
 
 type OrderSummary = {
   id: string
   orderNumber: string
   total: { toString: () => string }
+  currency: string
   items: Array<{ id: string; name: string; quantity: number; total: { toString: () => string } }>
 }
 
@@ -29,6 +38,7 @@ export function PayPageClient({ token, order }: { token: string; order: OrderSum
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [method, setMethod] = useState<string>("mobile_money")
+  const [mnoProvider, setMnoProvider] = useState<string>("mpesa")
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "" })
 
   async function handleSubmit(e: React.FormEvent) {
@@ -45,12 +55,17 @@ export function PayPageClient({ token, order }: { token: string; order: OrderSum
         email: form.email || undefined,
         address: form.address ? { street: form.address } : undefined,
       })
-      const result = await initiatePaymentLinkPayment(token)
+      let result
+      if (method === "mobile_money") {
+        result = await initiatePaymentLinkPayment(token, { method, mnoProvider })
+      } else {
+        result = await initiatePaymentLinkPayment(token, { method })
+      }
       if (!result.success) throw new Error(result.message)
       if (result.data?.paymentUrl) {
         window.location.href = result.data.paymentUrl
       } else {
-        toast.success("Payment initiated!")
+        toast.success(result.message)
         router.push(`/pay/${token}/success`)
       }
     } catch (err) {
@@ -108,11 +123,35 @@ export function PayPageClient({ token, order }: { token: string; order: OrderSum
             )
           })}
         </div>
+
+        {method === "mobile_money" && (
+          <div className="mt-3">
+            <Label>Mobile Money Provider</Label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {MNO_PROVIDERS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setMnoProvider(p.id)}
+                  className={cn(
+                    "flex items-center justify-between gap-2 p-3 rounded-lg border text-sm transition-colors",
+                    mnoProvider === p.id
+                      ? "border-primary bg-primary/5 ring-1 ring-primary"
+                      : "hover:bg-accent"
+                  )}
+                >
+                  <span>{p.label}</span>
+                  {mnoProvider === p.id && <Check className="h-4 w-4 text-primary" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <Button type="submit" size="lg" className="w-full" disabled={loading}>
         {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-        {loading ? "Processing..." : `Pay TZS ${Number(order.total).toLocaleString("en-US")}`}
+        {loading ? "Processing..." : `Pay ${formatPrice(Number(order.total), order.currency)}`}
       </Button>
     </form>
   )

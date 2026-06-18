@@ -81,7 +81,7 @@ describe("Signature Utility", () => {
   it("base64 encodes and decodes payload", async () => {
     const { base64Encode, base64Decode } = await import("@/features/payments/lib/signature")
 
-    const payload = { orderId: "123", amount: 50000, currency: "TZS" }
+    const payload = { orderId: "123", amount: 50000, currency: "USD" }
     const encoded = base64Encode(payload)
     const decoded = base64Decode<typeof payload>(encoded)
 
