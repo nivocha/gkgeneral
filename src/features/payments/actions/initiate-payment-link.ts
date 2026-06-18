@@ -34,10 +34,20 @@ export async function initiatePaymentLinkPayment(
     return { success: false, message: "Payment link has expired" }
   }
 
-  const order = link.order
-  const payment = order.payment
+  let order = link.order
+  let payment = order.payment
 
-  if (!payment) return { success: false, message: "No payment record found" }
+  if (!payment) {
+    payment = await prisma.payment.create({
+      data: {
+        orderId: order.id,
+        amount: order.total,
+        currency: order.currency,
+        method: "payment_link",
+        status: "Pending",
+      },
+    })
+  }
   if (payment.status === "Paid" || payment.status === "Refunded") {
     return { success: false, message: `Payment is already ${payment.status}` }
   }

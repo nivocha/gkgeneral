@@ -29,6 +29,19 @@ export async function generatePaymentLink(orderId: string) {
   const token = randomUUID()
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
+  const existingPayment = await prisma.payment.findFirst({ where: { orderId } })
+  if (!existingPayment) {
+    await prisma.payment.create({
+      data: {
+        orderId,
+        amount: order.total,
+        currency: order.currency,
+        method: "payment_link",
+        status: "Pending",
+      },
+    })
+  }
+
   await prisma.paymentLink.create({
     data: { token, orderId, expiresAt },
   })
