@@ -80,7 +80,9 @@ class EvMakClient {
   }
 
   private getApiBaseUrl(): string {
-    return "https://checkout.evmak.com/api/v1"
+    const { apiUrl } = getPaymentEnv()
+    const base = apiUrl.replace(/\/+$/, "")
+    return `${base}/api/v1`
   }
 
   isConfigured(): boolean {
