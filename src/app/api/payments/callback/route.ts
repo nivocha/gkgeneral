@@ -10,18 +10,61 @@ import type { PaymentStatus } from "@/lib/prisma"
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const reference = searchParams.get("reference") || searchParams.get("transaction_reference")
+  const evmakStatus = searchParams.get("status") || ""
 
-  let redirectUrl = `${new URL(request.url).origin}/`
+  let payment = null
   if (reference) {
-    const payment = await prisma.payment.findFirst({
+    payment = await prisma.payment.findFirst({
       where: { reference },
       include: { order: { select: { id: true, orderNumber: true } } },
     })
-    if (payment) {
-      const link = await prisma.paymentLink.findFirst({ where: { orderId: payment.orderId } })
-      if (link) redirectUrl = `${new URL(request.url).origin}/pay/${link.token}/success`
-      else redirectUrl = `${new URL(request.url).origin}/account/orders`
-    }
+  }
+
+  if (!payment) {
+    payment = await prisma.payment.findFirst({
+      where: { status: "Processing" },
+      orderBy: { updatedAt: "desc" },
+      include: { order: { select: { id: true, orderNumber: true } } },
+    })
+  }
+
+  if (payment && (payment.status === "Processing" || payment.status === "Pending")) {
+    try {
+      const { evmakClient } = await import("@/features/payments/lib/evmak-client")
+      const result = await evmakClient.reconcilePayment(payment.reference || payment.id)
+      if (result.success && result.status) {
+        const newStatus = mapEvMakStatusToPaymentStatus(result.status)
+        if (newStatus && newStatus !== payment.status) {
+          try {
+            assertValidTransition(payment.status as PaymentStatus, newStatus)
+            await prisma.payment.update({
+              where: { id: payment.id },
+              data: {
+                status: newStatus,
+                gatewayStatus: result.status,
+                ...(result.transactionReference ? { transactionReference: result.transactionReference } : {}),
+                ...(result.approvalCode ? { approvalCode: result.approvalCode } : {}),
+                ...(newStatus === "Paid" ? { paidAt: new Date() } : {}),
+              },
+            })
+            if (newStatus === "Paid") {
+              await prisma.order.update({
+                where: { id: payment.orderId },
+                data: { status: "Paid" },
+              })
+            }
+            payment.status = newStatus as any
+          } catch {}
+        }
+      }
+    } catch {}
+  }
+
+  let redirectUrl = `${new URL(request.url).origin}/`
+  if (payment) {
+    const link = await prisma.paymentLink.findFirst({ where: { orderId: payment.orderId } })
+    if (link) redirectUrl = `${new URL(request.url).origin}/pay/${link.token}/success`
+    else redirectUrl = `${new URL(request.url).origin}/account/orders`
   }
 
   return new Response(
